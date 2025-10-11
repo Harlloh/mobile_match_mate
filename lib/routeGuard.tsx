@@ -34,6 +34,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         const inAuthGroup = segments[0] === "auth";
         const inOnboarding = segments[0] === "onboarding";
 
+
         // 🚧 If onboarding not done, always show onboarding first
         if (!hasOnboarded && !inOnboarding) {
             route.replace("/onboarding");
@@ -42,7 +43,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
 
         // 🚧 Then auth routing logic
         if (hasOnboarded && !user && !inAuthGroup && !session) {
-            route.replace("/auth");
+            route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
         }
         else if (user && inAuthGroup && !isLoading) {
             route.replace("/");

@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { PaperProvider } from 'react-native-paper';
+import { MD3LightTheme, PaperProvider } from 'react-native-paper';
 import 'react-native-reanimated';
 
 
@@ -12,14 +12,24 @@ export const unstable_settings = {
 };
 
 
-
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    background: "#f9fafb", // light gray page bg
+    surface: "#ffffff",    // keeps cards and inputs white
+    primary: "#10b981",    // your brand green
+    outline: "#e5e7eb",    // soft gray outline
+    onSurfaceVariant: "#6b7280", // text inside inputs
+  },
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
     // <UserProvider>
-    <PaperProvider>
+    <PaperProvider theme={theme}>
 
 
       {/* <ThemeProvider value={colorScheme !== 'dark' ? DarkTheme : DefaultTheme}> */}
