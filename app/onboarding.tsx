@@ -1,7 +1,7 @@
 import OnboardingItems from '@/components/onboardingItem';
 import { OnboardingItemsType } from '@/types';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useRef } from 'react';
 import { Animated, FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
@@ -33,97 +33,98 @@ export default function OnboardingScreen() {
 
 
     return (
-        <View style={styles.container}>
-            <View>
-                <Text style={styles.title}>Welcome to Match Mate ⚽</Text>
-                <Text style={styles.text}>
-                    Your Football, your way
-                </Text>
-            </View>
-
-            {/* PLACE THE CAROUSEL HERE WITH BUTTON */}
-            <View style={{
-                width: '100%',
-                // backgroundColor: 'red',
-                alignSelf: 'center',
-            }}>
-                <FlatList
-                    data={flatList}
-                    contentContainerStyle={{ paddingHorizontal: 0 }}
-                    snapToAlignment="center"
-                    decelerationRate="fast"
-
-                    ref={flatListRef}
-                    keyExtractor={(item) => item?.header}
-                    horizontal
-                    showsHorizontalScrollIndicator
-                    pagingEnabled
-                    bounces={false}
-                    onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
-                        useNativeDriver: false
-                    })}
-
-                    renderItem={({ item, index }) => <OnboardingItems {...item} index={index} totalSlides={flatList.length} scrollToNext={(nextIndex) => flatListRef.current?.scrollToIndex({ index: nextIndex })}
-                    />}
-
-                />
-                {/* Pagination Dots */}
-                <View style={styles.pagination}>
-                    {flatList.map((_, i) => {
-                        const inputRange = [
-                            (i - 1) * width,
-                            i * width,
-                            (i + 1) * width,
-                        ];
-
-                        const dotOpacity = scrollX.interpolate({
-                            inputRange,
-                            outputRange: [0.3, 1, 0.3],
-                            extrapolate: "clamp",
-                        });
-
-                        const dotScale = scrollX.interpolate({
-                            inputRange,
-                            outputRange: [0.8, 1.2, 0.8],
-                            extrapolate: "clamp",
-                        });
-
-                        return (
-                            <Animated.View
-                                key={i.toString()}
-                                style={[
-                                    styles.dot,
-                                    {
-                                        opacity: dotOpacity,
-                                        transform: [{ scale: dotScale }],
-                                    },
-                                ]}
-                            />
-                        );
-                    })}
+        <>
+            <Stack.Screen options={{ headerShown: false }} />
+            <View style={styles.container}>
+                <View style={{ paddingTop: 30 }}>
+                    <Text style={styles.title}>Welcome to Match Mate ⚽</Text>
+                    <Text style={styles.text}>
+                        Your Football, your way
+                    </Text>
                 </View>
 
+                {/* PLACE THE CAROUSEL HERE WITH BUTTON */}
+                <View style={{
+                    width: '100%',
+                    // backgroundColor: 'red',
+                    alignSelf: 'center',
+                }}>
+                    <FlatList
+                        data={flatList}
+                        contentContainerStyle={{ paddingHorizontal: 0 }}
+                        snapToAlignment="center"
+                        decelerationRate="fast"
+
+                        ref={flatListRef}
+                        keyExtractor={(item) => item?.header}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        pagingEnabled
+                        bounces={false}
+                        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+                            useNativeDriver: false
+                        })}
+
+                        renderItem={({ item, index }) => <OnboardingItems {...item} index={index} totalSlides={flatList.length} scrollToNext={(nextIndex) => flatListRef.current?.scrollToIndex({ index: nextIndex })} />}
+                    />
+                    {/* Pagination Dots */}
+                    <View style={styles.pagination}>
+                        {flatList.map((_, i) => {
+                            const inputRange = [
+                                (i - 1) * width,
+                                i * width,
+                                (i + 1) * width,
+                            ];
+
+                            const dotOpacity = scrollX.interpolate({
+                                inputRange,
+                                outputRange: [0.3, 1, 0.3],
+                                extrapolate: "clamp",
+                            });
+
+                            const dotScale = scrollX.interpolate({
+                                inputRange,
+                                outputRange: [0.8, 1.2, 0.8],
+                                extrapolate: "clamp",
+                            });
+
+                            return (
+                                <Animated.View
+                                    key={i.toString()}
+                                    style={[
+                                        styles.dot,
+                                        {
+                                            opacity: dotOpacity,
+                                            transform: [{ scale: dotScale }],
+                                        },
+                                    ]}
+                                />
+                            );
+                        })}
+                    </View>
 
 
+
+                </View>
+                <Text style={{
+                    marginTop: 5, color: '#5a5d63ff'
+                }}>Already have an account?
+                    <Pressable onPress={() => router.replace('/auth')}>
+                        {({ pressed }) => (
+                            <Text style={{
+                                color: pressed ? '#0056CC' : '#007AFF',
+                                textDecorationLine: 'underline',
+                                fontWeight: '600',
+                                marginLeft: 5,
+                                marginTop: 10
+                            }}>
+                                Sign in
+                            </Text>
+                        )}
+                    </Pressable>
+                </Text>
             </View>
-            <Text style={{
-                marginTop: 5, color: '#5a5d63ff'
-            }}>Already have an account?
-                <Pressable onPress={() => router.replace('/auth')}>
-                    {({ pressed }) => (
-                        <Text style={{
-                            color: pressed ? '#0056CC' : '#007AFF',
-                            textDecorationLine: 'underline',
-                            fontWeight: '600',
-                            marginLeft: 5,
-                            marginTop: 10
-                        }}>
-                            Sign in
-                        </Text>
-                    )}
-                </Pressable>
-            </Text>
-        </View>
+        </>
     );
 }
 
@@ -134,7 +135,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 40,               // top & bottom breathing room
         // paddingHorizontal: 24,
-        paddingBottom: 50
+        paddingBottom: 50,
+        backgroundColor: 'white'
     },
     title: { fontSize: 24, fontWeight: "bold", marginBottom: 12 },
     text: { textAlign: "center", marginBottom: 24 },

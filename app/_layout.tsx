@@ -1,4 +1,3 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import 'react-native-reanimated';
@@ -23,15 +22,15 @@ export default function RootLayout() {
     <PaperProvider>
 
 
-      <ThemeProvider value={colorScheme !== 'dark' ? DarkTheme : DefaultTheme}>
-        <SafeAreaProvider>
-          <RouteGaurd>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </RouteGaurd>
-        </SafeAreaProvider>
-      </ThemeProvider>
+      {/* <ThemeProvider value={colorScheme !== 'dark' ? DarkTheme : DefaultTheme}> */}
+      <SafeAreaProvider>
+        <RouteGaurd>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </RouteGaurd>
+      </SafeAreaProvider>
+      {/* </ThemeProvider> */}
     </PaperProvider>
     // </UserProvider>
   );

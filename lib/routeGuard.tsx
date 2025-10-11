@@ -21,7 +21,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         const loadOnboarding = async () => {
             const flag = await AsyncStorage.getItem("hasOnboarded") || localStorage.getItem('hasOnboarded');
             setHasOnboarded(false);
-            // setHasOnboarded(flag === "true");
+            setHasOnboarded(flag === "true");
             setMounted(true);
         };
         loadOnboarding();
@@ -48,6 +48,8 @@ function RouteGaurd({ children }: { children: ReactNode }) {
             route.replace("/");
         }
     }, [user, session, isLoading, mounted, hasOnboarded, segments]);
+
+
 
     if (isLoading || hasOnboarded === null || !mounted) {
         return (

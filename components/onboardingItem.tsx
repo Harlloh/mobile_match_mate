@@ -1,82 +1,3 @@
-// import { OnboardingItemsType } from "@/types";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { useRouter } from "expo-router";
-// import { JSX } from "react";
-// import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-// import { Button } from "react-native-paper";
-
-// type PropsType = OnboardingItemsType & {
-//     index: number;
-//     totalSlides: number;
-//     scrollToNext: (nextIndex: number) => void;
-
-// }
-
-
-// function OnboardingItems({ header, desc, icon, index, totalSlides, scrollToNext,
-// }: PropsType): JSX.Element {
-//     const { width } = useWindowDimensions()
-//     const router = useRouter()
-
-
-//     const handleNext = async () => {
-//         if (index === totalSlides - 1) {
-//             await AsyncStorage.setItem("hasOnboarded", "true");
-//             localStorage.setItem("hasOnboarded", "true");
-//             router.replace('/auth')
-//         } else {
-//             scrollToNext(index + 1);
-//         }
-//     }
-
-
-
-//     return (
-//         <View style={[styles.container, { width }]}>
-//             {icon}
-//             <Text style={styles.header}>{header}</Text>
-//             <Text style={styles.desc}>{desc}</Text>
-//             <Button style={styles.btn} mode="contained" buttonColor="#10b981" textColor="white" onPress={handleNext}>{index === totalSlides - 1 ? 'Get Started' : 'Next'}</Button>
-
-//         </View>
-//     );
-// }
-
-// export default OnboardingItems;
-
-
-
-
-
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         width: '100%',
-//         flexDirection: 'column',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         padding: 16,
-//         gap: 8,
-//         backgroundColor: 'blue',
-//         // height: 'fit-content' // Removed invalid value
-//         alignSelf: 'flex-start', // This will make the container only as tall as its content
-//     },
-//     header: {
-//         fontWeight: 600,
-//         fontSize: 23
-//     },
-//     desc: {
-//         textAlign: 'center',
-//         color: '#647494'
-//     },
-//     btn: {
-//         width: '80%',
-//         marginTop: 4
-//     }
-// })
-
-
 import { OnboardingItemsType } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -103,7 +24,7 @@ function OnboardingItems({
 
     const handleNext = async () => {
         if (index === totalSlides - 1) {
-            await AsyncStorage.setItem("hasOnboarded", "true");
+            await AsyncStorage.setItem("hasOnboarded", 'true');
             router.replace("/auth");
         } else {
             scrollToNext(index + 1);
@@ -129,7 +50,7 @@ function OnboardingItems({
                     {index === totalSlides - 1 ? "Get Started" : "Next"}
                 </Button>
             </View>
-        </View>
+        </View >
     );
 }
 
@@ -153,10 +74,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         elevation: 5, // Android shadow
-        shadowColor: "#000", // iOS shadow
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
+        // shadowColor: "#000", // iOS shadow
+        // shadowOffset: { width: 0, height: 3 },
+        // shadowOpacity: 0.15,
+        // shadowRadius: 6,
     },
 
     // 💡 Icon centered in a soft circle
