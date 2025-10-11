@@ -14,7 +14,8 @@ function SignUp() {
     })
 
     const handleSubmit = () => {
-        console.log('sign up formdata', formData)
+        console.log('sign up formdata', formData);
+        router.replace('/')
     };
 
     return (

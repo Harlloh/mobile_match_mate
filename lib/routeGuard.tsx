@@ -42,12 +42,12 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         }
 
         // 🚧 Then auth routing logic
-        if (hasOnboarded && !user && !inAuthGroup && !session) {
-            route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
-        }
-        else if (user && inAuthGroup && !isLoading) {
-            route.replace("/");
-        }
+        // if (hasOnboarded && !user && !inAuthGroup && !session) {
+        //     route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
+        // }
+        // else if (user && inAuthGroup && !isLoading) {
+        //     route.replace("/");
+        // }
     }, [user, session, isLoading, mounted, hasOnboarded, segments]);
 
 

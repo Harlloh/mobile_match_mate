@@ -14,6 +14,7 @@ function SignIn() {
 
     const handleSubmit = () => {
         console.log(formData)
+        router.replace('/')
     }
 
     return (

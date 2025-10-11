@@ -65,7 +65,7 @@ export default function OnboardingScreen() {
                             useNativeDriver: false
                         })}
 
-                        renderItem={({ item, index }) => <OnboardingItems {...item} index={index} totalSlides={flatList.length} scrollToNext={(nextIndex) => flatListRef.current?.scrollToIndex({ index: nextIndex })} />}
+                        renderItem={({ item, index }) => <OnboardingItems {...item} index={index} totalSlides={flatList.length} scrollToNext={(nextIndex: number) => flatListRef.current?.scrollToIndex({ index: nextIndex })} />}
                     />
                     {/* Pagination Dots */}
                     <View style={styles.pagination}>

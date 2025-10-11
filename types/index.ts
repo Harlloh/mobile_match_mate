@@ -17,3 +17,21 @@ export type OnboardingItemsType = {
     desc: string;
     icon: ReactElement;
 }
+
+
+
+export type ClubsType = {
+    clubIcon: string,
+    clubName: string,
+    scored: number | null
+}
+export interface MatchCardType {
+    league: string;
+    leagueIcon: string;
+    startDay: string;
+    startTime: string;
+    isLive: boolean;
+    timeCurrentlyAt: string | null;
+    clubs: ClubsType[];
+    stadium: string
+}
