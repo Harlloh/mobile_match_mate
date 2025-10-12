@@ -34,7 +34,7 @@ function MatchCard({ match }: { match: MatchCardType }) {
                                 <View style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Text>{clubItem.clubIcon}</Text>
                                     {/* <Text variant="bodySmall">vs</Text> */}
-                                    <Text variant="headlineMedium">{clubItem.clubName}</Text>
+                                    <Text variant="titleLarge">{clubItem.clubName}</Text>
                                 </View>
                                 {clubItem.scored && <Text variant="titleLarge">{clubItem.scored}</Text>}
                             </View>

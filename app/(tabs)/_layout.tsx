@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 
+import CustomHeader from '@/components/customHeader';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -24,26 +25,26 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          header: () => <CustomHeader title='Matchmate' />,
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen name='matches' options={{
-        title: 'Matches',
+        header: () => <CustomHeader title='Matches' />,
         headerShown: true,
         tabBarIcon: ({ color }) => <IconSymbol size={28} name='calendar' color={color} />
       }}
       />
       <Tabs.Screen name='favourites' options={{
-        title: 'Favourites',
+        header: () => <CustomHeader title='Favourites' />,
         headerShown: true,
         tabBarIcon: ({ color }) => <IconSymbol size={28} name='heart' color={color} />
       }}
       />
       <Tabs.Screen name='profile' options={{
         title: 'Profile',
-        headerShown: true,
+        headerShown: false,
         tabBarIcon: ({ color }) => <IconSymbol size={28} name='person.circle.fill' color={color} />
       }}
       />
