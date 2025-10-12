@@ -4,7 +4,7 @@ import { Text } from "react-native-paper";
 function NotificationsScreen() {
     return (
         <View>
-            <Text>Notifications screen</Text>
+            <Text> Notifications screen</Text>
         </View>
     );
 }

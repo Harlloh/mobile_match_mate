@@ -14,7 +14,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: '#10b981', // Active tab color (green)
         tabBarInactiveTintColor: '#6b7280', // Inactive tab color (gray)
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
         tabBarStyle: {
           backgroundColor: '#ffffff',
@@ -25,18 +25,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: 'Home',
           header: () => <CustomHeader title='Matchmate' />,
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen name='matches' options={{
+        title: 'Matches',
         header: () => <CustomHeader title='Matches' />,
         headerShown: true,
         tabBarIcon: ({ color }) => <IconSymbol size={28} name='calendar' color={color} />
       }}
       />
       <Tabs.Screen name='favourites' options={{
+        title: 'Favourites',
         header: () => <CustomHeader title='Favourites' />,
         headerShown: true,
         tabBarIcon: ({ color }) => <IconSymbol size={28} name='heart' color={color} />
@@ -48,6 +51,20 @@ export default function TabLayout() {
         tabBarIcon: ({ color }) => <IconSymbol size={28} name='person.circle.fill' color={color} />
       }}
       />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          href: null,
+          title: 'Notifications',
+          header: () => <CustomHeader title='Notifications' />,
+          headerShown: true,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bell" color={color} />,
+        }}
+      />
+
+
+
+
     </Tabs>
   );
 }

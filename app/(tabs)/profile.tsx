@@ -1,11 +1,11 @@
-import { View } from "react-native";
 import { Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function ProfileScreen() {
     return (
-        <View>
+        <SafeAreaView>
             <Text> Profile screen</Text>
-        </View>
+        </SafeAreaView>
     );
 }
 

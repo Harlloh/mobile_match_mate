@@ -2,17 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function CustomHeader({ title }: { title: string }) {
     const router = useRouter();
+    const insets = useSafeAreaInsets()
 
     return (
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
             <Text variant="titleLarge" style={styles.title}>{title}</Text>
 
             {/* Notification Bell */}
             <Pressable
-                onPress={() => router.push('/notifications')}
+                onPress={() => router.push('/(tabs)/notifications')}
                 style={({ pressed }) => [
                     styles.bellButton,
                     pressed && styles.bellPressed

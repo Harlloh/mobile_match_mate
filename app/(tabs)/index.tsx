@@ -2,7 +2,6 @@ import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
 import { MatchCardType } from '@/types';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function HomeScreen() {
@@ -49,9 +48,30 @@ export default function HomeScreen() {
       ],
       stadium: 'Old Stanford Bridge'
     },
+    {
+      league: 'Premier League',
+      leagueIcon: 'icnImg',
+      startDay: 'Today',
+      startTime: '9:11pm',
+      isLive: true,
+      timeCurrentlyAt: '67',
+      clubs: [
+        {
+          clubIcon: 'clubIcon',
+          clubName: 'Chelsea',
+          scored: 2
+        },
+        {
+          clubIcon: 'clubIcon',
+          clubName: 'PSG',
+          scored: 1
+        },
+      ],
+      stadium: 'Old Stanford Bridge'
+    },
   ]
   return (
-    <SafeAreaView>
+    <View>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -68,7 +88,7 @@ export default function HomeScreen() {
         }
       </ScrollView>
 
-    </SafeAreaView>
+    </View>
   );
 };
 
