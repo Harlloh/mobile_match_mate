@@ -21,10 +21,11 @@ export type OnboardingItemsType = {
 
 
 export type ClubsType = {
-    clubIcon: string,
-    clubName: string,
-    scored: number | null
+    clubIcon: string;
+    clubName: string;
+    scored: number | null;
 }
+
 export interface MatchCardType {
     league: string;
     leagueIcon: string;
@@ -32,6 +33,7 @@ export interface MatchCardType {
     startTime: string;
     isLive: boolean;
     timeCurrentlyAt: string | null;
-    clubs: ClubsType[];
-    stadium: string
+    home: ClubsType;  // Changed from teams array
+    away: ClubsType;  // Changed from teams array
+    stadium: string;
 }

@@ -3,73 +3,109 @@ import MatchCard from '@/components/matchCard';
 import { MatchCardType } from '@/types';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+const RAPID_API_KEY = '31846439a34475ff70e1a7580a02ada6';
+const BASE_URL = 'https://v3.football.api-sports.io/';
 
 export default function HomeScreen() {
   const match: MatchCardType[] = [
     {
       league: 'Premier League',
-      leagueIcon: 'icnImg',
+      leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
       startDay: 'Tomorrow',
       startTime: '9:11pm',
       isLive: false,
       timeCurrentlyAt: null,
-      clubs: [
-        {
-          clubIcon: 'clubIcon',
-          clubName: 'Liverpool',
-          scored: null
-        },
-        {
-          clubIcon: 'clubIcon',
-          clubName: 'Arsenal',
-          scored: null
-        },
-      ],
+      home: {
+        clubIcon: "https://media.api-sports.io/football/teams/33.png",
+        clubName: 'Man U',
+        scored: null
+      },
+      away: {
+        clubIcon: "https://media.api-sports.io/football/teams/34.png",
+        clubName: 'New Castle',
+        scored: null
+      },
       stadium: 'Emirates Stadium'
     },
     {
       league: 'Premier League',
-      leagueIcon: 'icnImg',
-      startDay: 'Today',
+      leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
+      startDay: 'Tomorrow',
       startTime: '9:11pm',
-      isLive: true,
-      timeCurrentlyAt: '67',
-      clubs: [
-        {
-          clubIcon: 'clubIcon',
-          clubName: 'Chelsea',
-          scored: 2
-        },
-        {
-          clubIcon: 'clubIcon',
-          clubName: 'PSG',
-          scored: 1
-        },
-      ],
-      stadium: 'Old Stanford Bridge'
+      isLive: false,
+      timeCurrentlyAt: null,
+      home: {
+        clubIcon: "https://media.api-sports.io/football/teams/33.png",
+        clubName: 'Man U',
+        scored: null
+      },
+      away: {
+        clubIcon: "https://media.api-sports.io/football/teams/34.png",
+        clubName: 'New Castle',
+        scored: null
+      },
+      stadium: 'Emirates Stadium'
     },
     {
       league: 'Premier League',
-      leagueIcon: 'icnImg',
+      leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
       startDay: 'Today',
       startTime: '9:11pm',
       isLive: true,
       timeCurrentlyAt: '67',
-      clubs: [
-        {
-          clubIcon: 'clubIcon',
-          clubName: 'Chelsea',
-          scored: 2
-        },
-        {
-          clubIcon: 'clubIcon',
-          clubName: 'PSG',
-          scored: 1
-        },
-      ],
+      home: {
+        clubIcon: "https://media.api-sports.io/football/teams/33.png",
+        clubName: 'Chelsea',
+        scored: 2
+      },
+      away: {
+        clubIcon: "https://media.api-sports.io/football/teams/34.png",
+        clubName: 'PSG',
+        scored: 1
+      },
       stadium: 'Old Stanford Bridge'
     },
-  ]
+  ];
+  // const fetchMatchDetails = async (): Promise<MatchCardType[]> => {
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}`, {
+
+  //       headers: {
+  //         'X-RapidAPI-Key': RAPID_API_KEY,
+  //         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
+  //       },
+  //     })
+  //     console.log(res, 'Hollaa')
+  //     // Map the API response to your MatchCardType
+  //     const matches: MatchCardType[] = res.data.response.map((match: any) => ({
+  //       id: match.fixture.id.toString(),
+  //       homeTeam: match.teams.home.name,
+  //       awayTeam: match.teams.away.name,
+  //       homeTeamLogo: match.teams.home.logo,
+  //       awayTeamLogo: match.teams.away.logo,
+  //       date: new Date(match.fixture.date).toLocaleDateString(),
+  //       time: new Date(match.fixture.date).toLocaleTimeString('en-US', {
+  //         hour: '2-digit',
+  //         minute: '2-digit',
+  //       }),
+  //       competition: match.league.name,
+  //       competitionLogo: match.league.logo,
+  //       homeScore: match.goals.home ?? 0,
+  //       awayScore: match.goals.away ?? 0,
+  //       status: match.fixture.status.short, // 'NS', 'LIVE', 'FT', etc.
+  //     }));
+
+  //     return matches;
+  //   } catch (error) {
+  //     console.error('Something went wrong', error)
+  //     throw error
+  //   }
+
+  // }
+  // useEffect(() => {
+  //   const matche = fetchMatchDetails()
+  //   // console.log(matche, 'HEYYYYYYYYYYYY')
+  // }, [])
   return (
     <View>
       <ScrollView
