@@ -19,7 +19,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const loadOnboarding = async () => {
-            const flag = await AsyncStorage.getItem("hasOnboarded") || localStorage.getItem('hasOnboarded');
+            const flag = await AsyncStorage.getItem("hasOnboarded");
             setHasOnboarded(false);
             setHasOnboarded(flag === "true");
             setMounted(true);

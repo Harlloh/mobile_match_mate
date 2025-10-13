@@ -5,6 +5,8 @@ import CustomHeader from '@/components/customHeader';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -35,20 +37,26 @@ export default function TabLayout() {
         title: 'Matches',
         header: () => <CustomHeader title='Matches' />,
         headerShown: true,
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name='calendar' color={color} />
+        tabBarIcon: ({ color }) => {
+          return Platform.OS === 'ios' ? <IconSymbol size={28} name='calendar' color={color} /> : <FontAwesome5 size={22} name='calendar-alt' color={color} />
+        }
       }}
       />
       <Tabs.Screen name='favourites' options={{
         title: 'Favourites',
         header: () => <CustomHeader title='Favourites' />,
         headerShown: true,
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name='heart' color={color} />
+        tabBarIcon: ({ color }) => {
+          return Platform.OS === 'ios' ? <IconSymbol size={28} name='heart' color={color} /> : <FontAwesome5 size={22} name='heart' color={color} />
+        }
       }}
       />
       <Tabs.Screen name='profile' options={{
         title: 'Profile',
         headerShown: false,
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name='person.circle.fill' color={color} />
+        tabBarIcon: ({ color }) => {
+          return Platform.OS === 'ios' ? <IconSymbol size={28} name='person.circle.fill' color={color} /> : <FontAwesome5 size={22} name='user' color={color} />
+        }
       }}
       />
       <Tabs.Screen
