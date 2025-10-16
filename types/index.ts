@@ -37,3 +37,14 @@ export interface MatchCardType {
     away: ClubsType;  // Changed from teams array
     stadium: string;
 }
+
+
+export type TeamType = {
+    name: string;
+    icon: string
+}
+export type LeagueType = {
+    name: string,
+    country: string,
+    icon: string,
+}
