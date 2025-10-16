@@ -16,7 +16,11 @@ function MatchCard({ match }: { match: MatchCardType }) {
                     <Text variant="labelSmall">{match.league}</Text>
                 </View>
                 <View>
-                    {match.isLive ? (
+                    {match?.timeCurrentlyAt === 'FT' || match?.timeCurrentlyAt === 'HT' ? (
+                        <Text variant="labelSmall" style={{ color: '#64748b' }}>
+                            {match.timeCurrentlyAt}
+                        </Text>
+                    ) : match.isLive ? (
                         <View style={styles.livebadge}>
                             <Text style={styles.liveText}>LIVE {match.timeCurrentlyAt}'</Text>
                         </View>
@@ -27,6 +31,7 @@ function MatchCard({ match }: { match: MatchCardType }) {
                             </Text>
                         </View>
                     )}
+
                 </View>
             </View>
 
@@ -73,10 +78,10 @@ function MatchCard({ match }: { match: MatchCardType }) {
                 <Text variant="labelSmall" style={{ color: '#64748b' }}>
                     {match.stadium}
                 </Text>
-                {!match.isLive && (
+                {(!match.isLive && !match.timeCurrentlyAt) && (
                     <Button
                         textColor="#10b981"
-                        onPress={() => console.log('Set Reminder')}
+                        onPress={() => console.log('Set Reminder for this match', match)}
                     >
                         Set Alert
                     </Button>

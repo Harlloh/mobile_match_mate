@@ -1,15 +1,17 @@
 import MatchCard from '@/components/matchCard';
 import { match } from '@/lib/utils';
 import { MatchCardType } from '@/types';
+import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 function MatchesScreen() {
-    const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'Finished'>('all');
+    const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'finished'>('all');
     const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(true);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [filteredMatch, setFilteredMatch] = useState<MatchCardType[] | []>([])
 
     const filter = [
         { label: 'All', key: 'all' },
@@ -28,11 +30,47 @@ function MatchesScreen() {
     }
 
     const onDateChange = (event: any, selectedDate?: Date) => {
-        // setShowDatePicker(Platform.OS === 'ios');
         if (selectedDate) {
-            setDate(selectedDate)
+            setDate(selectedDate);
         }
+        if (Platform.OS === 'android') {
+            setShowDatePicker(false);
+        }
+    };
+
+    const handleCalendarPress = () => {
+        setShowDatePicker(true);
+    };
+
+    const getFilteredMatches = () => {
+        const formattedSelectedDate = formatDate(date);
+
+        let filtered: MatchCardType[] = match
+
+        if (activeFilter === 'live') {
+            filtered = match.filter(item => item.isLive)
+        } else if (activeFilter == 'upcoming') {
+            filtered = match.filter((item) => !item.isLive && !item.timeCurrentlyAt)
+        } else if (activeFilter === 'finished') {
+            filtered = match.filter(item => item.timeCurrentlyAt === 'FT')
+        }
+
+        // TO HANDLE THE DATE FILTER LOGIC
+        // filtered = filtered.filter(item => item.startDau === formattedSelectedDate)
+
+        return filtered
     }
+
+    useEffect(() => {
+        // console.log('Current filters', { activeFilter, date })
+
+        const filtered = getFilteredMatches();
+        setFilteredMatch(filtered);
+
+    }, [activeFilter, date])
+
+
+
     return (
         <ScrollView>
 
@@ -58,14 +96,47 @@ function MatchesScreen() {
                         )
                     })}
                 </View>
-                <View style={styles.calendarWrapper}>
-                    {/* <FontAwesome5 name="calendar-alt" size={24} color="black" /> */}
-                    <DateTimePicker value={date} mode="date" onChange={onDateChange} style={styles.calendar} ></DateTimePicker>
+
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                    <Pressable style={styles.calendarWrapper} onPress={handleCalendarPress}>
+                        <FontAwesome5 name="calendar-alt" size={24} color="black" />
+                        <Text>{formatDate(date)}</Text>
+                    </Pressable>
                 </View>
+
+                {showDatePicker && (
+                    Platform.OS === 'ios' ? (
+                        <Modal transparent={true} animationType="slide">
+                            <View style={styles.modalOverlay}>
+                                <View style={styles.modalContent}>
+                                    <DateTimePicker
+                                        value={date}
+                                        mode="date"
+                                        display="spinner"
+                                        onChange={onDateChange}
+                                    />
+                                    <Pressable
+                                        style={styles.doneButton}
+                                        onPress={() => setShowDatePicker(false)}
+                                    >
+                                        <Text style={{ color: '#10b981', fontWeight: '600' }}>Done</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </Modal>
+                    ) : (
+                        <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="default"
+                            onChange={onDateChange}
+                        />
+                    )
+                )}
 
 
                 {
-                    match?.map((item: MatchCardType, index) => {
+                    filteredMatch?.map((item: MatchCardType, index: number) => {
                         return (
                             <View key={index}>
                                 <MatchCard match={item} />
@@ -132,11 +203,29 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         marginVertical: 10,
-        marginBottom: 20
-    },
-    calendar: {
-        backgroundColor: '#0e3e2eff',
+        marginBottom: 20,
+        gap: 5,
+        borderWidth: 1,
         borderRadius: 10,
-    }
+        alignSelf: 'flex-start',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderColor: '#e2e8f0',
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        paddingBottom: 50,
+    },
+    doneButton: {
+        alignSelf: 'center',
+        marginTop: 10,
+    },
 });
 

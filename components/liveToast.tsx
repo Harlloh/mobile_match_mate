@@ -1,8 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
-function LiveToast() {
-    const liveMatch = 2
+function LiveToast({ liveMatch }: { liveMatch: number }) {
     return (
         <View style={styles.wrapper}
         >
