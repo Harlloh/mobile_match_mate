@@ -1,7 +1,7 @@
 import TeamCard from "@/components/teamCard";
 import { LeagueType, TeamType } from "@/types";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 function FavouritesScreen() {
@@ -100,15 +100,14 @@ function FavouritesScreen() {
                         </Pressable>
                     ))}
                 </View>
-                <ScrollView style={{ paddingVertical: 20, paddingHorizontal: 7 }}>
-                    {
-                        list?.map((item: TeamType | LeagueType, index: number) => (
-                            <View key={index}>
-                                <TeamCard type={type} team={item} />
-                            </View>
-                        ))
-                    }
-                </ScrollView>
+
+                <FlatList
+                    data={list}
+                    keyExtractor={(item) => item.name}
+                    renderItem={({ item }) => <TeamCard type={type} team={item} />}
+                    contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 7 }}
+                />
+
             </View>
 
         </View>
