@@ -41,10 +41,12 @@ export interface MatchCardType {
 
 export type TeamType = {
     name: string;
-    icon: string
+    icon: string;
+    id: string | number
 }
 export type LeagueType = {
     name: string,
+    id: string
     country: string,
     icon: string,
 }
