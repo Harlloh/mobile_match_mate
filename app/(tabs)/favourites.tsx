@@ -121,7 +121,6 @@ function FavouritesScreen() {
             {/* List */}
             {list.length > 0 ? (<FlatList
                 data={list}
-                // ✅ force string type (prevents TS error)
                 keyExtractor={(item) => String(item.id)}
                 renderItem={({ item }) => (
                     <TeamCard

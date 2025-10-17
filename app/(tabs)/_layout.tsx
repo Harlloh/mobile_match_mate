@@ -54,7 +54,8 @@ export default function TabLayout() {
       />
       <Tabs.Screen name='profile' options={{
         title: 'Profile',
-        headerShown: false,
+        header: () => <CustomHeader title='Profile' />,
+        headerShown: true,
         tabBarIcon: ({ color }) => {
           return Platform.OS === 'ios' ? <IconSymbol size={28} name='person.circle.fill' color={color} /> : <FontAwesome5 size={22} name='user' color={color} />
         }
