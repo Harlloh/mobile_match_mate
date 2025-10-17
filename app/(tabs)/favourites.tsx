@@ -1,23 +1,31 @@
 import TeamCard from "@/components/teamCard";
 import { leagues, teams } from "@/lib/utils";
 import { LeagueType, TeamType } from "@/types";
-import { useEffect, useState } from "react";
-import { FlatList, Platform, Pressable, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FlatList, Keyboard, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Text, TextInput } from "react-native-paper";
 
 function FavouritesScreen() {
     const tabs = ["Teams", "Leagues", "Hate Watch"];
     const [list, setList] = useState<(TeamType | LeagueType)[]>([]);
     const [activeList, setActiveList] = useState<"Teams" | "Leagues" | "Hate Watch">("Teams");
     const [type, setType] = useState<"favourite" | "hate">("favourite");
+    const [searchText, setSearchText] = useState<string>('')
 
     // Store full objects instead of just IDs
     const [favourites, setFavourites] = useState<(TeamType | LeagueType)[]>([]);
     const [hateList, setHateList] = useState<(TeamType | LeagueType)[]>([]);
 
+    const sourceList = useMemo(() => {
+        if (activeList === "Teams") return teams;
+        if (activeList === "Leagues") return leagues;
+        return teams;
+    }, [activeList]);
+    const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
 
     useEffect(() => {
+        setSearchText('')
         if (activeList === "Teams") {
             setList(teams);
             setType("favourite");
@@ -49,8 +57,52 @@ function FavouritesScreen() {
     const isItemInList = (list: (TeamType | LeagueType)[], id: string | number) =>
         list.some((item) => item.id === id);
 
+
+
+
+    //DEBOUNCE THE FILTER LOGIC
+    useEffect(() => {
+        // First, tear up the old receipt if one exists
+        if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current)
+        }
+
+        // Set a new timeout
+        searchTimeoutRef.current = setTimeout(() => {
+            if (searchText.trim() === '') {
+                setList(sourceList)
+            } else {
+                const filtered = sourceList.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()))
+                setList(filtered)
+            }
+        }, 250);
+
+        return () => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current)
+            }
+        }
+    }, [sourceList, searchText])
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container]}>
+            <TextInput
+                value={searchText}
+                mode='outlined'
+                placeholder="Search teams or leagues"
+                left={<TextInput.Icon icon='magnify' />}
+                onChangeText={setSearchText}
+                outlineColor="#e5e7eb"
+                activeOutlineColor="#10b981"
+                theme={{ colors: { background: '#ffffff' } }}
+                style={styles.searcHField}
+                autoCorrect={false}
+                autoComplete="off" autoCapitalize="none"
+                returnKeyType="search"
+                onSubmitEditing={() => Keyboard.dismiss()}
+            />
+
+
             {/* Tabs */}
             <View style={styles.buttonWrapper}>
                 {tabs.map((tab, index) => (
@@ -67,7 +119,7 @@ function FavouritesScreen() {
             </View>
 
             {/* List */}
-            <FlatList
+            {list.length > 0 ? (<FlatList
                 data={list}
                 // ✅ force string type (prevents TS error)
                 keyExtractor={(item) => String(item.id)}
@@ -95,6 +147,11 @@ function FavouritesScreen() {
                     paddingBottom: Platform.OS === 'ios' ? 100 : 0,
                 }}
             />
+            ) : (
+                <Text style={{ textAlign: 'center', marginTop: 40, color: '#64748b' }}>
+                    No results found.
+                </Text>
+            )}
         </View>
     );
 }
@@ -102,6 +159,10 @@ function FavouritesScreen() {
 export default FavouritesScreen;
 
 const styles = StyleSheet.create({
+    searcHField: {
+        marginHorizontal: 10,
+        marginVertical: 10
+    },
     container: {
         flex: 1,
         backgroundColor: "#f9fafb",
