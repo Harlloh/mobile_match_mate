@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { AuthContextType } from "@/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Session, User } from "@supabase/supabase-js";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
@@ -9,6 +10,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null)
+    const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null)
 
     const signUp = async (email: string, password: string): Promise<{ success: boolean; data?: any; error?: any }> => {
         try {
@@ -49,10 +51,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
         setUser(null)
     }
+    const loadOnboarding = async () => {
+        const flag = await AsyncStorage.getItem("hasOnboarded");
+        setHasOnboarded(flag === "true");
+    };
 
 
 
     useEffect(() => {
+        // check if users have been hasOnboarded
+        loadOnboarding();
+
         //GET INITIAL AUTH STATE
         const initializeAuth = async () => {
             setIsLoading(true)
@@ -83,7 +92,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [])
 
     return (
-        <userContext.Provider value={{ user, setUser, signUp, signIn, signOut, isLoading, session }}>
+        <userContext.Provider value={{ user, setUser, signUp, signIn, signOut, isLoading, session, hasOnboarded, setHasOnboarded }}>
             {children}
         </userContext.Provider>
     )

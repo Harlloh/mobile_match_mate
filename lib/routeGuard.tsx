@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "@/context/appContext";
 import { useRouter, useSegments } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
 import { View } from "react-native";
@@ -9,22 +9,14 @@ function RouteGaurd({ children }: { children: ReactNode }) {
     const route = useRouter();
     const segments = useSegments();
 
-    // temp placeholders for now
-    const user = false;
-    const session = false;
-    const isLoading = false;
+    const { user, session, isLoading } = useAuth();
 
     const [mounted, setMounted] = useState(false);
-    const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null);
+    const { hasOnboarded } = useAuth()
+
 
     useEffect(() => {
-        const loadOnboarding = async () => {
-            const flag = await AsyncStorage.getItem("hasOnboarded");
-            setHasOnboarded(false);
-            setHasOnboarded(flag === "true");
-            setMounted(true);
-        };
-        loadOnboarding();
+        setMounted(true);
     }, []);
 
 
@@ -42,12 +34,12 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         }
 
         // 🚧 Then auth routing logic
-        // if (hasOnboarded && !user && !inAuthGroup && !session) {
-        //     route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
-        // }
-        // else if (user && inAuthGroup && !isLoading) {
-        //     route.replace("/");
-        // }
+        if (hasOnboarded && !user && !inAuthGroup && !session) {
+            route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
+        }
+        else if (user && inAuthGroup && !isLoading) {
+            route.replace("/");
+        }
     }, [user, session, isLoading, mounted, hasOnboarded, segments]);
 
 

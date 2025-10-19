@@ -8,7 +8,9 @@ export interface AuthContextType {
     signOut: () => Promise<void>;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     isLoading: boolean;
-    session: Session | null
+    session: Session | null;
+    hasOnboarded: boolean | null;
+    setHasOnboarded: React.Dispatch<React.SetStateAction<boolean | null>>;
 
 }
 

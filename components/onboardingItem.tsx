@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/appContext";
 import { OnboardingItemsType } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -21,12 +22,18 @@ function OnboardingItems({
 }: PropsType): JSX.Element {
     const { width } = useWindowDimensions();
     const router = useRouter();
+    const { setHasOnboarded } = useAuth()
 
     const handleNext = async () => {
         if (index === totalSlides - 1) {
-            await AsyncStorage.setItem("hasOnboarded", 'true');
-            router.replace({ pathname: "/auth/[type]", params: { type: 'sigin' } });
-
+            try {
+                await AsyncStorage.setItem("hasOnboarded", 'true');
+                setHasOnboarded(true);
+                router.replace({ pathname: "/auth/[type]", params: { type: 'signup' } });
+            } catch (error) {
+                console.error('Error completing onboarding:', error);
+                // Handle error - maybe show a toast notification
+            }
         } else {
             scrollToNext(index + 1);
         }
