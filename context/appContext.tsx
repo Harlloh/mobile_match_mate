@@ -59,8 +59,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setSession(null)
     }
     const loadOnboarding = async () => {
-        const flag = await AsyncStorage.getItem("hasOnboarded");
-        setHasOnboarded(flag === "true");
+        try {
+            const flag = await AsyncStorage.getItem("hasOnboarded");
+            setHasOnboarded(flag === "true");
+        } catch (error) {
+            console.error('Error loading onboarding status:', error);
+            setHasOnboarded(false)
+
+        }
     };
 
 
