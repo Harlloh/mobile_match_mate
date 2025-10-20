@@ -12,6 +12,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
     const { user, session, isLoading } = useAuth();
 
     const [mounted, setMounted] = useState(false);
+    const [isReady, setIsReady] = useState(false);
     const { hasOnboarded } = useAuth()
 
 
@@ -40,11 +41,13 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         else if (user && inAuthGroup && !isLoading) {
             route.replace("/");
         }
+
+        setIsReady(true)
     }, [user, session, isLoading, mounted, hasOnboarded, segments]);
 
 
 
-    if (isLoading || hasOnboarded === null || !mounted) {
+    if (isLoading || hasOnboarded === null || !mounted || !isReady) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text>Loading...</Text>
