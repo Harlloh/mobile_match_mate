@@ -1,9 +1,12 @@
+import { useAuth } from '@/context/appContext';
 import Slider from '@react-native-community/slider';
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Switch, Text } from "react-native-paper";
 
 function ProfileScreen() {
+    const { signOut } = useAuth()
+    const [isLoading, setIsLoading] = useState(false)
     const [settings, setSettings] = useState({
         enableReminders: true,
         reminderTime: 30,
@@ -25,6 +28,18 @@ function ProfileScreen() {
         console.log(settings)
     }, [settings])
 
+    const handleSignOut = async () => {
+        try {
+            setIsLoading(true)
+            await signOut()
+        } catch (error) {
+            console.error("Error during sign out:", error);
+
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 50 }}>
             {/* 🧍 Profile Header */}
@@ -34,8 +49,8 @@ function ProfileScreen() {
                 </View>
                 <Text style={styles.name}>{user.name}</Text>
                 <Text style={styles.subText}>Connected since {user.joined}</Text>
-                <Button mode="text" textColor="#ef4444" style={{ marginTop: 10 }}>
-                    Sign Out
+                <Button disabled={isLoading} onPress={() => handleSignOut()} mode="text" textColor="#ef4444" style={{ marginTop: 10 }}>
+                    {isLoading ? 'Signing out..' : 'Sign Out'}
                 </Button>
             </View>
 

@@ -12,14 +12,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null)
     const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null)
 
-    const signUp = async (email: string, password: string): Promise<{ success: boolean; data?: any; error?: any }> => {
+    const signUp = async (email: string, password: string, userName: string): Promise<{ success: boolean; data?: any; error?: any }> => {
         try {
             const { data, error } = await supabase.auth.signUp({
                 email,
-                password
+                password,
+                options: {
+                    data: {
+                        userName,
+                        display_name: userName
+                    }
+                }
             })
             if (error) {
-                alert('An error occurred while signing up')
+                alert(error.message || 'An error occurred while signing up')
                 return { error, success: false }
             }
             return { success: true, data }
@@ -35,7 +41,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 password
             })
             if (error) {
-                alert('An error occurred while signing up')
+                alert(error.message || 'An error occurred while signing you in...')
                 return { error, success: false }
             }
             return { success: true, data }
@@ -50,6 +56,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             console.error('Error signing out', error);
         }
         setUser(null)
+        setSession(null)
     }
     const loadOnboarding = async () => {
         const flag = await AsyncStorage.getItem("hasOnboarded");
@@ -82,9 +89,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
-
             if (session?.user.id) {
-                //fetch user details
+                setUser(session?.user)
             }
             setIsLoading(false)
         })

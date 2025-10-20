@@ -1,9 +1,11 @@
+import { useAuth } from "@/context/appContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 
 function SignIn() {
+    const { signIn } = useAuth()
     const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -12,9 +14,19 @@ function SignIn() {
         password: ''
     })
 
-    const handleSubmit = () => {
-        console.log(formData)
-        router.replace('/')
+    const handleSubmit = async () => {
+        try {
+            setIsLoading(true)
+            console.log(formData)
+            const res = await signIn(formData.email, formData.password)
+            if (!res.success) return
+            router.replace('/')
+
+        } catch (error) {
+            console.error('Something happened while logging in...', error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -84,7 +96,7 @@ function SignIn() {
                         style={styles.button}
                         contentStyle={styles.buttonContent}
                     >
-                        Sign In
+                        {isLoading ? 'Signing you in...' : 'Sign In'}
                     </Button>
 
                     <View style={styles.signUpContainer}>

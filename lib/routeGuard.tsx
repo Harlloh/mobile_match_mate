@@ -38,13 +38,12 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         if (hasOnboarded && !user && !inAuthGroup && !session) {
             route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
         }
-        else if (user && inAuthGroup && !isLoading) {
+        else if (user && inAuthGroup && !isLoading && hasOnboarded) {
             route.replace("/");
         }
 
         setIsReady(true)
     }, [user, session, isLoading, mounted, hasOnboarded, segments]);
-
 
 
     if (isLoading || hasOnboarded === null || !mounted || !isReady) {
