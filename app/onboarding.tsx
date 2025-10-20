@@ -109,7 +109,7 @@ export default function OnboardingScreen() {
                 <Text style={{
                     marginTop: 5, color: '#5a5d63ff'
                 }}>Already have an account?
-                    <Pressable onPress={() => router.replace({ pathname: "/auth/[type]", params: { type: 'sigin' } })}>
+                    <Pressable onPress={() => router.replace("/auth/signin")}>
                         {({ pressed }) => (
                             <Text style={{
                                 color: pressed ? '#10b981' : '#10b981',

@@ -26,7 +26,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
 
         // If onboarded but no user, redirect to auth
         if (hasOnboarded && !user && !session && !inAuthGroup) {
-            route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
+            route.replace("/auth/signin");
             return;
         }
 

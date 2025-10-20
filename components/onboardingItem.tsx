@@ -29,7 +29,7 @@ function OnboardingItems({
             try {
                 await AsyncStorage.setItem("hasOnboarded", 'true');
                 setHasOnboarded(true);
-                router.replace({ pathname: "/auth/[type]", params: { type: 'signup' } });
+                router.replace("/auth/signup");
             } catch (error) {
                 console.error('Error completing onboarding:', error);
                 // Handle error - maybe show a toast notification

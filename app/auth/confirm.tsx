@@ -125,7 +125,7 @@ export default function ConfirmMail() {
             <Button
                 mode="text"
                 textColor="#6b7280"
-                onPress={() => router.push({ pathname: "/auth/[type]", params: { type: "signin" } })}
+                onPress={() => router.replace("/auth/signin")}
             >
                 Back to Sign In
             </Button>

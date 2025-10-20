@@ -1,22 +1,20 @@
-import SignIn from "@/components/signIn";
-import SignUp from "@/components/signup";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
-import ConfirmMail from "./confirm";
+// import SignIn from "@/app/auth/signIn";
+// import SignUp from "@/app/auth/signup";
+// import { Stack, useLocalSearchParams } from "expo-router";
+// import { View } from "react-native";
 
 
 
-export default function AuthScreen() {
-    const { type } = useLocalSearchParams();
+// export default function AuthScreen() {
+//     const { type } = useLocalSearchParams();
 
-    return (
-        <>
-            <Stack.Screen options={{ headerShown: true, title: 'Matchmate ⚽' }} />
-            <View style={{ flex: 1, }}>
-                {type === "signup" && <SignUp />}
-                {type === "signin" && <SignIn />}
-                {type === "confirm" && <ConfirmMail />}
-            </View>
-        </>
-    );
-}
+//     return (
+//         <>
+//             <Stack.Screen options={{ headerShown: true, title: 'Matchmate ⚽' }} />
+//             <View style={{ flex: 1, }}>
+//                 {type === "signup" && <SignUp />}
+//                 {type === "signin" && <SignIn />}
+//             </View>
+//         </>
+//     );
+// }
