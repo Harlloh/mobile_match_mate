@@ -4,49 +4,43 @@ import { ReactNode, useEffect, useState } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 
-
 function RouteGaurd({ children }: { children: ReactNode }) {
     const route = useRouter();
     const segments = useSegments();
-
-    const { user, session, isLoading } = useAuth();
-
-    const [mounted, setMounted] = useState(false);
+    const { user, session, isLoading, hasOnboarded } = useAuth();
     const [isReady, setIsReady] = useState(false);
-    const { hasOnboarded } = useAuth()
 
 
     useEffect(() => {
-        setMounted(true);
-    }, []);
-
-
-    useEffect(() => {
-        if (!mounted || !segments[0]) return;
+        // Wait for both auth and onboarding to be loaded
+        if (isLoading || hasOnboarded === null || !segments[0]) return;
 
         const inAuthGroup = segments[0] === "auth";
         const inOnboarding = segments[0] === "onboarding";
 
-
-        // 🚧 If onboarding not done, always show onboarding first
+        // If onboarding not done, redirect to onboarding
         if (!hasOnboarded && !inOnboarding) {
             route.replace("/onboarding");
             return;
         }
 
-        // 🚧 Then auth routing logic
-        if (hasOnboarded && !user && !inAuthGroup && !session) {
+        // If onboarded but no user, redirect to auth
+        if (hasOnboarded && !user && !session && !inAuthGroup) {
             route.replace({ pathname: "/auth/[type]", params: { type: 'signin' } });
+            return;
         }
-        else if (user && inAuthGroup && !isLoading && hasOnboarded) {
+
+        // If authenticated and in auth group, redirect to home
+        if (hasOnboarded && user && session && inAuthGroup) {
             route.replace("/");
+            return;
         }
 
         setIsReady(true)
-    }, [user, session, isLoading, mounted, hasOnboarded, segments]);
+    }, [user, session, isLoading, hasOnboarded, segments]);
 
-
-    if (isLoading || hasOnboarded === null || !mounted || !isReady) {
+    // Show loading only while auth is initializing or hasOnboarded is null
+    if (isLoading || hasOnboarded === null || !segments[0] || !isReady) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text>Loading...</Text>
@@ -56,5 +50,5 @@ function RouteGaurd({ children }: { children: ReactNode }) {
 
     return <>{children}</>;
 }
-export default RouteGaurd;
 
+export default RouteGaurd;
