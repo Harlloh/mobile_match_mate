@@ -21,7 +21,7 @@ function SignUp() {
             const res = await signUp(formData.email, formData.password, formData.userName)
             if (!res.success) return
 
-            router.replace('/')
+            router.replace('/auth/confirm')
         } catch (error) {
             console.error('Something went wrong while signing up...', error)
         } finally {

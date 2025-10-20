@@ -28,6 +28,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 alert(error.message || 'An error occurred while signing up')
                 return { error, success: false }
             }
+            setUser(data.user)
             return { success: true, data }
         } catch (error) {
             alert('An error occurred while signing up')

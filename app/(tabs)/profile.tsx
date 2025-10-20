@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Switch, Text } from "react-native-paper";
 
 function ProfileScreen() {
-    const { signOut } = useAuth()
+    const { user, signOut, } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
     const [settings, setSettings] = useState({
         enableReminders: true,
@@ -19,10 +19,7 @@ function ProfileScreen() {
         setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const user = {
-        name: "Football Fan",
-        joined: "April 2025",
-    };
+
 
     useEffect(() => {
         console.log(settings)
@@ -40,15 +37,27 @@ function ProfileScreen() {
         }
     }
 
+
+    const formatDate = (dateString: string | undefined) => {
+        if (!dateString) return 'Unknown';
+
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-GB', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        })
+    }
+
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 50 }}>
             {/* 🧍 Profile Header */}
             <View style={styles.profileHeader}>
                 <View style={styles.avatarPlaceholder}>
-                    <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
+                    <Text style={styles.avatarText}>{user?.user_metadata.display_name.charAt(0)}</Text>
                 </View>
-                <Text style={styles.name}>{user.name}</Text>
-                <Text style={styles.subText}>Connected since {user.joined}</Text>
+                <Text style={styles.name}>{user?.user_metadata.display_name}</Text>
+                <Text style={styles.subText}>Joined since {formatDate(user?.confirmed_at)}</Text>
                 <Button disabled={isLoading} onPress={() => handleSignOut()} mode="text" textColor="#ef4444" style={{ marginTop: 10 }}>
                     {isLoading ? 'Signing out..' : 'Sign Out'}
                 </Button>
