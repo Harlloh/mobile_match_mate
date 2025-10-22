@@ -32,6 +32,7 @@ function MatchesScreen() {
     const onDateChange = (event: any, selectedDate?: Date) => {
         if (selectedDate) {
             setDate(selectedDate);
+            console.log(selectedDate)
         }
         if (Platform.OS === 'android') {
             setShowDatePicker(false);
