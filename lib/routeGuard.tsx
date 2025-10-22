@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/appContext";
-import { useRouter, useSegments } from "expo-router";
+import { usePathname, useRouter, useSegments } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
@@ -7,11 +7,14 @@ import { Text } from "react-native-paper";
 function RouteGaurd({ children }: { children: ReactNode }) {
     const route = useRouter();
     const segments = useSegments();
+    const params = usePathname()
     const { user, session, isLoading, hasOnboarded } = useAuth();
     const [isReady, setIsReady] = useState(false);
 
 
     useEffect(() => {
+        const isPasswordResetFlow = params.includes('reset-password') || params.includes('forgot-password');
+
         // Wait for both auth and onboarding to be loaded
         if (isLoading || hasOnboarded === null || !segments[0]) return;
 
@@ -31,7 +34,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
         }
 
         // If authenticated and in auth group, redirect to home
-        if (hasOnboarded && user && session && inAuthGroup) {
+        if (hasOnboarded && user && session && inAuthGroup && !isPasswordResetFlow) {
             route.replace("/");
             return;
         }

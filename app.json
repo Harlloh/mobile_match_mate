@@ -5,7 +5,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobilematchmate",
+    "scheme": "exp",
+    // "scheme": "mobilematchmate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
