@@ -51,7 +51,7 @@ export default function ConfirmMail() {
             setStatusMessage(`❌ ${error.message}`);
         } else {
             setStatusMessage("✅ Email verified successfully!");
-            router.replace("/favourites");
+            router.replace("/leagues");
         }
 
     }

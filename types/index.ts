@@ -49,7 +49,18 @@ export type TeamType = {
 }
 export type LeagueType = {
     name: string,
-    id: string
-    country: string,
-    icon: string,
+    id: string,
+    logo?: string,
+    type?: string,
+    country?: string,
+    icon?: string,
 }
+
+export const POPULARITY_ORDER = {
+    "Premier League": 100,
+    "UEFA Champions League": 99,
+    "La Liga": 95,
+    "Serie A": 90,
+    "Bundesliga": 85,
+    "Ligue 1": 80,
+};

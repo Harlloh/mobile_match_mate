@@ -1,4 +1,4 @@
-import { getFixturesByDate } from '@/services/matchService';
+import { getFixturesByDate, getLeagues } from '@/services/matchService';
 import { useEffect, useState } from 'react';
 
 export const useMatchesFixtures = (date: string) => {
@@ -27,3 +27,30 @@ export const useMatchesFixtures = (date: string) => {
 
     return { matches, loading, error };
 };
+
+export const useGetLeagues = () => {
+    const [leagues, setLeagues] = useState<any[] | []>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchLeagues = async () => {
+            try {
+                const res = await getLeagues();
+                if (isMounted) {
+                    setLeagues(res.data.response);
+                    setLoading(false);
+                }
+            } catch (error) {
+                if (isMounted) setError(error instanceof Error ? error?.message : String(error) || 'Failed to load leagues')
+            } finally {
+                if (isMounted) setLoading(false)
+            }
+        }
+        fetchLeagues();
+        return () => { isMounted = false }
+    }, [])
+    return { leagues, loading, error }
+}
