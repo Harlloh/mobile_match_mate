@@ -25,6 +25,7 @@ export default function TabLayout() {
           borderTopWidth: 1,
         },
       }}>
+      {/* HOME SCREEN */}
       <Tabs.Screen
         name="index"
         options={{
@@ -34,6 +35,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
+
+      {/* LEAGUES */}
+      <Tabs.Screen name='leagues' options={{
+        title: 'Leagues',
+        header: () => <CustomHeader title='Leagues' />,
+        headerShown: true,
+        tabBarIcon: ({ color }) => {
+          return Platform.OS === 'ios' ? <IconSymbol size={28} name='trophy' color={color} /> : <FontAwesome5 size={22} name='trophy' color={color} />
+        }
+      }}
+      />
+
+      {/* MATCHES */}
       <Tabs.Screen name='matches' options={{
         title: 'Matches',
         header: () => <CustomHeader title='Matches' />,
@@ -43,15 +57,20 @@ export default function TabLayout() {
         }
       }}
       />
+      {/* MY LISTS */}
       <Tabs.Screen name='favourites' options={{
-        title: 'Favourites',
-        header: () => <CustomHeader title='Favourites' />,
+        title: 'My Lists',
+        header: () => <CustomHeader title='My Lists' />,
         headerShown: true,
         tabBarIcon: ({ color }) => {
           return Platform.OS === 'ios' ? <IconSymbol size={28} name='heart' color={color} /> : <FontAwesome5 size={22} name='heart' color={color} />
         }
       }}
       />
+
+
+
+      {/* PROFILE */}
       <Tabs.Screen name='profile' options={{
         title: 'Profile',
         header: () => <CustomHeader title='Profile' />,

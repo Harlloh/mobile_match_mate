@@ -51,6 +51,7 @@ function FavouritesScreen() {
                 return exists ? prev.filter((hate) => hate.id !== item.id) : [...prev, item];
             });
         }
+        console.log("Favourites:", favourites);
 
     };
 
@@ -83,6 +84,13 @@ function FavouritesScreen() {
             }
         }
     }, [sourceList, searchText])
+
+
+
+    useEffect(() => {
+        console.log("Favourites updated:", favourites);
+        // console.log("Hate list updated:", hateList);
+    }, [favourites, hateList])
 
     return (
         <View style={[styles.container]}>

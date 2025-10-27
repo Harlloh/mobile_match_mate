@@ -124,6 +124,14 @@ export const leagues: LeagueType[] = [
 ];
 
 
+
+export const FILTERS: string[] = [
+    'Live',
+    'Upcoming',
+    'Finished',
+];
+
+
 export const formatDate = (dateInput: string | Date) => {
     const date = new Date(dateInput);
 

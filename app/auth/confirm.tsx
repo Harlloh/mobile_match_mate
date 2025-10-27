@@ -51,7 +51,7 @@ export default function ConfirmMail() {
             setStatusMessage(`❌ ${error.message}`);
         } else {
             setStatusMessage("✅ Email verified successfully!");
-            router.replace("/"); // or wherever you want to redirect
+            router.replace("/favourites");
         }
 
     }
