@@ -1,14 +1,14 @@
 import TeamCard from "@/components/teamCard";
-import { leagues, teams } from "@/lib/utils";
+import { teams } from "@/lib/utils";
 import { LeagueType, TeamType } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Keyboard, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
 function FavouritesScreen() {
-    const tabs = ["Teams", "Leagues", "Hate Watch"];
+    const tabs = ["Favourites", "Hate Watch"];
     const [list, setList] = useState<(TeamType | LeagueType)[]>([]);
-    const [activeList, setActiveList] = useState<"Teams" | "Leagues" | "Hate Watch">("Teams");
+    const [activeList, setActiveList] = useState<"Favourites" | "Hate Watch">("Favourites");
     const [type, setType] = useState<"favourite" | "hate">("favourite");
     const [searchText, setSearchText] = useState<string>('')
 
@@ -17,8 +17,7 @@ function FavouritesScreen() {
     const [hateList, setHateList] = useState<(TeamType | LeagueType)[]>([]);
 
     const sourceList = useMemo(() => {
-        if (activeList === "Teams") return teams;
-        if (activeList === "Leagues") return leagues;
+        if (activeList === "Favourites") return teams;
         return teams;
     }, [activeList]);
     const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
@@ -26,11 +25,8 @@ function FavouritesScreen() {
 
     useEffect(() => {
         setSearchText('')
-        if (activeList === "Teams") {
+        if (activeList === "Favourites") {
             setList(teams);
-            setType("favourite");
-        } else if (activeList === "Leagues") {
-            setList(leagues);
             setType("favourite");
         } else if (activeList === "Hate Watch") {
             setList(teams);
@@ -97,7 +93,7 @@ function FavouritesScreen() {
             <TextInput
                 value={searchText}
                 mode='outlined'
-                placeholder="Search teams or leagues"
+                placeholder="Search teams..."
                 left={<TextInput.Icon icon='magnify' />}
                 onChangeText={setSearchText}
                 outlineColor="#e5e7eb"

@@ -1,7 +1,9 @@
 import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
+import { useAppStore } from '@/context/useAppStore';
 import { FILTERS } from '@/lib/utils';
 import { MatchCardType } from '@/types';
+import { Link } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -9,6 +11,7 @@ import { Text } from 'react-native-paper';
 
 
 export default function HomeScreen() {
+  const { subscribedLeagues } = useAppStore()
   const [activeTab, setActiveTab] = useState<"Live" | "Upcoming" | "Finished">("Live");
   const [upcomingList, setUpcomingList] = useState<MatchCardType[] | []>([]);
   const [finishedList, setFinishedList] = useState<MatchCardType[] | []>([]);
@@ -128,52 +131,64 @@ export default function HomeScreen() {
   }, [match])
 
 
-
-  return (
-    <View>
-      <View style={styles.buttonWrapper}>
-        {FILTERS.map((tab, index) => (
-          <Pressable
-            key={index}
-            onPress={() => setActiveTab(tab as any)}
-            style={[styles.tabBtn, activeTab === tab && styles.activeTabBtn]}
-          >
-            <Text style={{ color: activeTab === tab ? "#10b981" : "#64748b" }}>
-              {tab}
-            </Text>
-            <Text style={activeTab === tab ? styles.activeTabText : styles.deActiveTabText}>{tab === 'Live' ? liveList.length : tab === 'Upcoming' ? upcomingList.length : finishedList.length}</Text>
-
-          </Pressable>
-        ))}
+  if (subscribedLeagues.length < 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Please subscribe to leagues to see matches.</Text>
       </View>
+    )
+  }
+  return (
+    <>
+      {subscribedLeagues.length > 0 ? <View>
+        <View style={styles.buttonWrapper}>
+          {FILTERS.map((tab, index) => (
+            <Pressable
+              key={index}
+              onPress={() => setActiveTab(tab as any)}
+              style={[styles.tabBtn, activeTab === tab && styles.activeTabBtn]}
+            >
+              <Text style={{ color: activeTab === tab ? "#10b981" : "#64748b" }}>
+                {tab}
+              </Text>
+              <Text style={activeTab === tab ? styles.activeTabText : styles.deActiveTabText}>{tab === 'Live' ? liveList.length : tab === 'Upcoming' ? upcomingList.length : finishedList.length}</Text>
 
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {activeList.length > 0 && activeTab === 'Live' && <LiveToast liveMatch={activeList.length} />}
-
-        <View style={styles.filterContainer}>
-          {/* <Text variant='titleLarge' style={styles.filterTitle}>{activeTab === 'Live' ? 'Live Now' : activeTab === 'Upcoming' ? 'Coming Up' : 'Finished'}</Text> */}
-          {
-            activeList.length > 0 ? (
-              activeList.map((item: MatchCardType, index) => {
-                return (
-                  <View key={index}>
-                    <MatchCard match={item} />
-                  </View>
-                )
-              })
-            ) : (
-              <Text>No {activeTab.toLowerCase()} matches</Text>
-            )
-
-          }
+            </Pressable>
+          ))}
         </View>
-      </ScrollView>
 
-    </View>
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {activeList.length > 0 && activeTab === 'Live' && <LiveToast liveMatch={activeList.length} />}
+
+          <View style={styles.filterContainer}>
+            {/* <Text variant='titleLarge' style={styles.filterTitle}>{activeTab === 'Live' ? 'Live Now' : activeTab === 'Upcoming' ? 'Coming Up' : 'Finished'}</Text> */}
+            {
+              activeList.length > 0 ? (
+                activeList.map((item: MatchCardType, index) => {
+                  return (
+                    <View key={index}>
+                      <MatchCard match={item} />
+                    </View>
+                  )
+                })
+              ) : (
+                <Text>No {activeTab.toLowerCase()} matches</Text>
+              )
+
+            }
+          </View>
+        </ScrollView>
+
+      </View> : (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Please <Link style={{ color: '#10b981' }} href="/leagues">subscribe</Link> to leagues to see matches update.</Text>
+        </View>
+      )}
+    </>
   );
 };
 

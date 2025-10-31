@@ -1,4 +1,4 @@
-import { LeagueType, MatchCardType, TeamType } from "@/types";
+import { MatchCardType, TeamType } from "@/types";
 
 export const match: MatchCardType[] = [
     {
@@ -110,19 +110,6 @@ export const teams: TeamType[] = [
     { id: "8", name: "Bayern Munich", icon: "https://media.api-sports.io/football/teams/157.png" },
 ];
 
-export const leagues: LeagueType[] = [
-    { id: "39", name: "Premier League", country: "England", icon: "https://media.api-sports.io/football/leagues/39.png" },
-    { id: "140", name: "La Liga", country: "Spain", icon: "https://media.api-sports.io/football/leagues/140.png" },
-    { id: "135", name: "Serie A", country: "Italy", icon: "https://media.api-sports.io/football/leagues/135.png" },
-    { id: "78", name: "Bundesliga", country: "Germany", icon: "https://media.api-sports.io/football/leagues/78.png" },
-    { id: "61", name: "Ligue 1", country: "France", icon: "https://media.api-sports.io/football/leagues/61.png" },
-    { id: "88", name: "Eredivisie", country: "Netherlands", icon: "https://media.api-sports.io/football/leagues/88.png" },
-    { id: "2909", name: "Champions League", country: "Europe", icon: "https://media.api-sports.io/football/leagues/2.png" },
-    { id: "8983", name: "Europa League", country: "Europe", icon: "https://media.api-sports.io/football/leagues/3.png" },
-    { id: "253", name: "Major League Soccer", country: "USA", icon: "https://media.api-sports.io/football/leagues/253.png" },
-    { id: "307", name: "Saudi Pro League", country: "Saudi Arabia", icon: "https://media.api-sports.io/football/leagues/307.png" },
-];
-
 
 
 export const FILTERS: string[] = [
@@ -130,6 +117,26 @@ export const FILTERS: string[] = [
     'Upcoming',
     'Finished',
 ];
+
+export const popularLeaguesList = [
+    39,  // Premier League (England)
+    2,   // UEFA Champions League,
+    3, // UEFA EUROPA LEAGUE
+    46, // UEFA EUROPA LEAGUE
+    140, // La Liga (Spain)
+    135, // Serie A (Italy)
+    78,  // Bundesliga (Germany)
+    61,  // Ligue 1 (France)
+    88, // Eredivisie (Netherlands),
+    848, // UEFA EUROPA LEAGUE
+    1186,
+    15,
+    598
+
+
+];
+
+
 
 
 export const formatDate = (dateInput: string | Date) => {
