@@ -33,23 +33,11 @@ function LeaguesScreen() {
             const formatted = leagues
                 .map((item: any) => item.league as LeagueType);
 
-            // const sorted = formatted.sort((a, b) => {
-            //     const aPopular = popularLeaguesList.includes(a.id)
-            //     const bPopular = popularLeaguesList.includes(b.id)
-
-            //     if (aPopular && !bPopular) return -1;
-            //     if (!aPopular && bPopular) return 1;
-
-
-            //     // if both popular, sort by their order in popularLeaguesList
-            //     if (aPopular && bPopular)
-            //         return popularLeaguesList.indexOf(a.id) - popularLeaguesList.indexOf(b.id);
-
-
-            //     // // otherwise alphabetically
-            //     return 0;
-            // })
-            setFormattedLeagues(formatted);
+            const sorted = formatted.filter((a) => {
+                return popularLeagues.includes(a.id)
+            })
+            // Spread sorted and append the rest (excluding duplicates) so the state is LeagueType[]
+            setFormattedLeagues([...sorted, ...formatted.filter(f => !sorted.some(s => s.id === f.id))]);
             setFilteredLeagues(formatted);
         }
     }, [leagues]);
