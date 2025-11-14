@@ -122,6 +122,7 @@ export const popularLeaguesList = [
     39,  // Premier League (England)
     2,   // UEFA Champions League,
     3, // UEFA EUROPA LEAGUE
+    307,
     46, // UEFA EUROPA LEAGUE
     140, // La Liga (Spain)
     135, // Serie A (Italy)
@@ -131,7 +132,7 @@ export const popularLeaguesList = [
     848, // UEFA EUROPA LEAGUE
     1186,
     15,
-    598
+    598,
 
 
 ];

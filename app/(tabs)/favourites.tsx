@@ -1,4 +1,5 @@
 import TeamCard from "@/components/teamCard";
+import { useAppStore } from "@/context/useAppStore";
 import { teams } from "@/lib/utils";
 import { LeagueType, TeamType } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -6,15 +7,17 @@ import { FlatList, Keyboard, Platform, Pressable, StyleSheet, View } from "react
 import { Text, TextInput } from "react-native-paper";
 
 function FavouritesScreen() {
+    const { setFavList, favList, } = useAppStore()
+    // const {setFavList, setHateList,favList, hateList} = useAppStore()
     const tabs = ["Favourites", "Hate Watch"];
-    const [list, setList] = useState<(TeamType | LeagueType)[]>([]);
+    const [list, setList] = useState<(TeamType)[]>([]);
     const [activeList, setActiveList] = useState<"Favourites" | "Hate Watch">("Favourites");
     const [type, setType] = useState<"favourite" | "hate">("favourite");
     const [searchText, setSearchText] = useState<string>('')
 
     // Store full objects instead of just IDs
-    const [favourites, setFavourites] = useState<(TeamType | LeagueType)[]>([]);
-    const [hateList, setHateList] = useState<(TeamType | LeagueType)[]>([]);
+    const [favourites, setFavourites] = useState<(TeamType)[]>([]);
+    const [hateList, setHateList] = useState<(TeamType)[]>([]);
 
     const sourceList = useMemo(() => {
         if (activeList === "Favourites") return teams;
@@ -35,12 +38,13 @@ function FavouritesScreen() {
     }, [activeList]);
 
 
-    const handleToggle = (item: TeamType | LeagueType, toggleType: "favourite" | "hate") => {
+    const handleToggle = (item: TeamType, toggleType: "favourite" | "hate") => {
         if (toggleType === "favourite") {
             setFavourites((prev) => {
                 const exists = prev.some((fav) => fav.id === item.id);
                 return exists ? prev.filter((fav) => fav.id !== item.id) : [...prev, item];
             });
+            setFavList(item)
         } else {
             setHateList((prev) => {
                 const exists = prev.some((hate) => hate.id === item.id);
@@ -83,10 +87,10 @@ function FavouritesScreen() {
 
 
 
-    useEffect(() => {
-        console.log("Favourites updated:", favourites);
-        // console.log("Hate list updated:", hateList);
-    }, [favourites, hateList])
+    // useEffect(() => {
+    //     console.log("Favourites updated:", favourites);
+    //     // console.log("Hate list updated:", hateList);
+    // }, [favourites, hateList])
 
     return (
         <View style={[styles.container]}>
@@ -139,7 +143,7 @@ function FavouritesScreen() {
                             (type === "hate" && isItemInList(favourites, item.id)) ||
                             (type === "favourite" && isItemInList(hateList, item.id))
                         }
-                        onToggle={handleToggle}
+                        onToggle={() => handleToggle(item, type)}
                         onHateList={type === "hate" && isItemInList(favourites, item.id)}
                         onFavList={type === "favourite" && isItemInList(hateList, item.id)}
                     />

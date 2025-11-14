@@ -16,6 +16,8 @@ function LeaguesScreen() {
     const [filteredLeagues, setFilteredLeagues] = useState<LeagueType[] | []>([])
     const [selectedLeagues, setSelectedLeagues] = useState<LeagueType[] | []>([])
     const [visibleCount, setVisibleCount] = useState<number>(5)
+    const [showSubscribedOnly, setShowSubscribedOnly] = useState(false);
+
 
 
     const handleLoadMore = () => {
@@ -33,12 +35,16 @@ function LeaguesScreen() {
             const formatted = leagues
                 .map((item: any) => item.league as LeagueType);
 
-            const sorted = formatted.filter((a) => {
+            const popular = formatted.filter((a) => {
                 return popularLeagues.includes(a.id)
             })
+            const others = formatted.filter((a) => {
+                return !popularLeagues.includes(a.id)
+            })
+            const sorted = [...popular, ...others]
             // Spread sorted and append the rest (excluding duplicates) so the state is LeagueType[]
-            setFormattedLeagues([...sorted, ...formatted.filter(f => !sorted.some(s => s.id === f.id))]);
-            setFilteredLeagues(formatted);
+            setFormattedLeagues(sorted);
+            setFilteredLeagues(sorted);
         }
     }, [leagues]);
 
@@ -67,6 +73,7 @@ function LeaguesScreen() {
             const filtered = leagueList.filter((item: LeagueType) => item.name.toLowerCase().includes(text.toLowerCase().trim()));
             setFilteredLeagues(filtered)
         }, 200)
+        console.log(filteredLeagues)
     }
 
     const handleLeagues = (league: LeagueType) => {
@@ -85,7 +92,6 @@ function LeaguesScreen() {
 
 
     const saveChanges = () => {
-
         setSubscribedLeagues(selectedLeagues);
         setSelectedLeagues([])
         susbscribeChangeRef.current = false;
@@ -94,17 +100,33 @@ function LeaguesScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>
-                Subscribe or Unsubscribe from leagues you want to get match updates for
+                Subscribe or Unsubscribe to leagues you want to get match updates from
             </Text>
+            <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 30, alignItems: 'center' }}>
 
-            <TextInput
-                placeholder="Search leagues..."
-                onChangeText={handleLeagueFilter}
-                mode="outlined"
-                outlineStyle={{ borderRadius: 12 }}
-                style={styles.searchInput}
-                left={<TextInput.Icon icon="magnify" />}
-            />
+                <TextInput
+                    placeholder="Search leagues..."
+                    onChangeText={handleLeagueFilter}
+                    mode="outlined"
+                    onBlur={() => { }}
+                    outlineStyle={{ borderRadius: 12 }}
+                    style={styles.searchInput}
+                    left={<TextInput.Icon icon="magnify"
+
+                    />}
+                />
+                <Pressable
+                    onPress={() => setShowSubscribedOnly(!showSubscribedOnly)}
+                    style={[styles.filterChip, showSubscribedOnly && styles.filterChipActive]}
+                >
+                    <Text
+                        style={[styles.filterChipText, showSubscribedOnly && styles.filterChipTextActive]}
+                    >
+                        {showSubscribedOnly ? 'Subscribed' : 'All'}
+                    </Text>
+                </Pressable>
+            </View>
+
 
             {loading && (
                 <View style={styles.center}>
@@ -124,7 +146,7 @@ function LeaguesScreen() {
                     {filteredLeagues.length > 0 ? (
                         <View style={{ position: 'relative' }}>
                             <FlatList
-                                data={filteredLeagues.slice(0, visibleCount)}
+                                data={showSubscribedOnly ? (subscribedLeagues.slice(0, visibleCount)) : (filteredLeagues.slice(0, visibleCount))}
                                 keyExtractor={(item) => item.id.toString()}
                                 showsVerticalScrollIndicator={true}
                                 scrollEnabled={true}
@@ -196,8 +218,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     searchInput: {
-        marginBottom: 20,
+        // marginBottom: 20,
         backgroundColor: "#fff",
+        flex: 1
     },
     list: {
         gap: 12,
@@ -267,6 +290,28 @@ const styles = StyleSheet.create({
         borderColor: '#f63b3bff',
         borderWidth: 1.5,
         backgroundColor: '#fee7e0ff',
+    },
+    filterChip: {
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 12,
+        backgroundColor: '#e2e8f0',
+        borderWidth: 1,
+        borderColor: '#cbd5e1',
+        marginLeft: 12,
+        alignSelf: 'center', // Center vertically
+        justifyContent: 'center',
+    },
+    filterChipActive: {
+        backgroundColor: '#10b981',
+        borderColor: '#10b981',
+    },
+    filterChipText: {
+        color: '#475569',
+        fontWeight: '600',
+    },
+    filterChipTextActive: {
+        color: '#fff',
     },
 
 });
