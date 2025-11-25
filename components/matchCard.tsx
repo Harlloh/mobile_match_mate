@@ -6,16 +6,20 @@ function MatchCard({ match }: { match: MatchCardType }) {
     return (
         <View style={styles.cardContainer}>
             {/* Header: League & Time/Live */}
-            <View style={styles.headerRow}>
-                <View style={{ display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+            <View style={[styles.headerRow, { gap: 10, flex: 1, }]}>
+                <View style={{ display: 'flex', flexDirection: 'row', gap: 2, alignItems: 'center', }}>
                     <Image
                         source={{ uri: match.leagueIcon }}
-                        style={{ width: 24, height: 24, borderRadius: 12, marginRight: 8 }}
+                        style={{ width: 24, height: 24, borderRadius: 12, }}
                         resizeMode="contain"
                     />
                     <Text variant="labelSmall">{match.league}</Text>
                 </View>
-                <View>
+                <View style={{
+                    flexShrink: 1,
+                    flexWrap: 'wrap',
+                    maxWidth: '40%',
+                }}>
                     {match?.timeCurrentlyAt === 'FT' || match?.timeCurrentlyAt === 'HT' ? (
                         <Text variant="labelSmall" style={{ color: '#64748b' }}>
                             {match.timeCurrentlyAt}
@@ -26,7 +30,7 @@ function MatchCard({ match }: { match: MatchCardType }) {
                         </View>
                     ) : (
                         <View>
-                            <Text variant="labelSmall" style={{ color: '#64748b' }}>
+                            <Text variant="labelSmall" style={{ color: '#64748b', textAlign: 'right' }}>
                                 {match.startDay} - {match.startTime}
                             </Text>
                         </View>
@@ -75,7 +79,7 @@ function MatchCard({ match }: { match: MatchCardType }) {
 
             {/* Footer: Stadium & Alert */}
             <View style={styles.footer}>
-                <Text variant="labelSmall" style={{ color: '#64748b' }}>
+                <Text variant="labelSmall" style={{ color: '#64748b', opacity: 0 }}>
                     {match.stadium}
                 </Text>
                 {(!match.isLive && !match.timeCurrentlyAt) && (

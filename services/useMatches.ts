@@ -15,7 +15,6 @@ export const useHomeMatchesFixtures = (date: string) => {
             try {
                 setLoading(true);
                 const data = await getFixturesByLeagues(date, subscribedLeagues);
-                debugger
                 if (isMounted) setMatches(data);
             } catch (err: any) {
                 if (isMounted) setError(err.message || 'Failed to load matches');

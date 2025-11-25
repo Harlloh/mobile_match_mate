@@ -1,5 +1,5 @@
 import MatchCard from '@/components/matchCard';
-import { match } from '@/lib/utils';
+import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,19 +8,19 @@ import { Modal, Platform, Pressable, ScrollView, StyleSheet, View } from "react-
 import { Text } from "react-native-paper";
 
 function MatchesScreen() {
-    const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'finished'>('all');
     const [date, setDate] = useState(new Date());
+    const { match, loading, error } = useHomeMatchesFixtures(
+        date.toISOString().split("T")[0]
+    );
+    const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'finished'>('all');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [filteredMatch, setFilteredMatch] = useState<MatchCardType[] | []>([])
-
     const filter = [
         { label: 'All', key: 'all' },
         { label: 'Live', key: 'live' },
         { label: 'Upcoming', key: 'upcoming' },
         { label: 'Finished', key: 'finished' },
     ]
-
-
     const formatDate = (date: Date) => {
         return date.toLocaleDateString('en-GB', {
             month: 'numeric',
@@ -28,6 +28,15 @@ function MatchesScreen() {
             year: 'numeric'
         })
     }
+
+
+
+
+
+
+
+
+
 
     const onDateChange = (event: any, selectedDate?: Date) => {
         if (selectedDate) {
@@ -44,33 +53,51 @@ function MatchesScreen() {
     };
 
     const getFilteredMatches = () => {
-        const formattedSelectedDate = formatDate(date);
+        if (!Array.isArray(match) || match.length === 0) return [];
 
-        let filtered: MatchCardType[] = match
+        switch (activeFilter) {
+            case "live":
+                return match.filter(m => m.isLive);
 
-        if (activeFilter === 'live') {
-            filtered = match.filter(item => item.isLive)
-        } else if (activeFilter == 'upcoming') {
-            filtered = match.filter((item) => !item.isLive && !item.timeCurrentlyAt)
-        } else if (activeFilter === 'finished') {
-            filtered = match.filter(item => item.timeCurrentlyAt === 'FT')
+            case "upcoming":
+                return match.filter(m => !m.isLive && !m.timeCurrentlyAt);
+
+            case "finished":
+                return match.filter(m => m.timeCurrentlyAt === "FT");
+
+            default:
+                return match; // ALL
         }
 
-        // TO HANDLE THE DATE FILTER LOGIC
-        // filtered = filtered.filter(item => item.startDau === formattedSelectedDate)
 
-        return filtered
     }
 
     useEffect(() => {
-        // console.log('Current filters', { activeFilter, date })
+        console.log('Current filters', { activeFilter, date })
+        if (loading) return
 
         const filtered = getFilteredMatches();
+        console.log(filtered, 'final filtered list', ' it should contain all list but filtered')
         setFilteredMatch(filtered);
 
-    }, [activeFilter, date])
+    }, [activeFilter, date, loading, match])
 
 
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Please wait while loading matches...</Text>
+            </View>
+        )
+    }
+    if (error) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Error loading matches: {error}</Text>
+            </View>
+        );
+    }
 
     return (
         <ScrollView>
@@ -136,14 +163,17 @@ function MatchesScreen() {
                 )}
 
 
-                {
+                {filteredMatch.length > 0 ?
                     filteredMatch?.map((item: MatchCardType, index: number) => {
                         return (
                             <View key={index}>
                                 <MatchCard match={item} />
                             </View>
                         )
-                    })
+                    }) :
+                    <View style={{ alignItems: 'center', marginTop: 50 }}>
+                        <Text>No {activeFilter} matches</Text>
+                    </View>
                 }
 
             </View>

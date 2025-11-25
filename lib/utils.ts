@@ -224,7 +224,6 @@ export const formatDate = (dateInput: string | Date) => {
 
 //MATCH TRANSFORMER FOR FOOTBALL-DATA.ORG
 export const matchTransformer = (match: any): MatchCardType => {
-    console.log(match, 'match gotten in the transformer');
     if (!match) return null as any;
 
     const date = new Date(match.utcDate);

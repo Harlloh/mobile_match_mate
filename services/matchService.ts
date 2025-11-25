@@ -18,8 +18,6 @@ export const getFixturesByLeagues = async (date: string, leagueIds: LeagueType[]
 
         const allMatches = rawMatches.map(matchTransformer);
 
-        console.log(allMatches, "All matches for all leagues", '**********');
-        console.log("All matches for all leagues", rawMatches, '##############');
         return allMatches;
     } catch (error: any) {
         console.error('Error fetching fixtures: ', error)
