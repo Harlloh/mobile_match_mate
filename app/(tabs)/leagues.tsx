@@ -1,17 +1,15 @@
 import { useAppStore } from "@/context/useAppStore";
-import { popularLeaguesList } from "@/lib/utils";
-import { useGetLeagues } from "@/services/useMatches";
+import { formatedtLeaguexy, popularLeaguesList } from "@/lib/utils";
 import { LeagueType } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
-import { ActivityIndicator, Text, TextInput } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper";
 
 function LeaguesScreen() {
     const popularLeagues = popularLeaguesList
-    const { leagues, loading, error } = useGetLeagues()
     const { subscribedLeagues, setSubscribedLeagues } = useAppStore();
 
-
+    const leagues = useMemo(() => formatedtLeaguexy(), []);
     const [formattedLeagues, setFormattedLeagues] = useState<LeagueType[] | []>([])
     const [filteredLeagues, setFilteredLeagues] = useState<LeagueType[] | []>([])
     const [selectedLeagues, setSelectedLeagues] = useState<LeagueType[] | []>([])
@@ -32,13 +30,12 @@ function LeaguesScreen() {
     // SET, FORMAT AND SET THE DEFAULT LEAGUES
     useEffect(() => {
         if (leagues && leagues.length > 0) {
-            const formatted = leagues
-                .map((item: any) => item.league as LeagueType);
 
-            const popular = formatted.filter((a) => {
+
+            const popular = leagues.filter((a: LeagueType) => {
                 return popularLeagues.includes(a.id)
             })
-            const others = formatted.filter((a) => {
+            const others = leagues.filter((a: LeagueType) => {
                 return !popularLeagues.includes(a.id)
             })
             const sorted = [...popular, ...others]
@@ -52,6 +49,7 @@ function LeaguesScreen() {
 
     // This ensures no timer runs after screen unmounts
     useEffect(() => {
+
         return () => {
             if (searchTextTimeoutRef.current) {
                 clearTimeout(searchTextTimeoutRef.current);
@@ -77,6 +75,8 @@ function LeaguesScreen() {
     }
 
     const handleLeagues = (league: LeagueType) => {
+
+
         setSelectedLeagues((prev: LeagueType[]) => {
             const exists = prev.some((item) => item.id === league.id)
             if (exists) {
@@ -128,7 +128,7 @@ function LeaguesScreen() {
             </View>
 
 
-            {loading && (
+            {/* {loading && (
                 <View style={styles.center}>
                     <ActivityIndicator animating size="large" color="#10b981" />
                     <Text>Fetching Leagues...</Text>
@@ -139,58 +139,58 @@ function LeaguesScreen() {
                 <View style={styles.center}>
                     <Text style={{ color: "red" }}>Error loading leagues: {error}</Text>
                 </View>
-            )}
+            )} */}
 
-            {!loading && !error && (
-                <View style={styles.list}>
-                    {filteredLeagues.length > 0 ? (
-                        <View style={{ position: 'relative' }}>
-                            <FlatList
-                                data={showSubscribedOnly ? (subscribedLeagues.slice(0, visibleCount)) : (filteredLeagues.slice(0, visibleCount))}
-                                keyExtractor={(item) => item.id.toString()}
-                                showsVerticalScrollIndicator={true}
-                                scrollEnabled={true}
-                                renderItem={({ item: league }) => {
-                                    const isSubscribed = subscribedLeagues.some((l) => l.id === league.id);
-                                    const isSelected = selectedLeagues?.some((l) => l.id === league.id)
+            {/* {!loading && !error && (
+            )} */}
+            <View style={styles.list}>
+                {filteredLeagues.length > 0 ? (
+                    <View style={{ position: 'relative' }}>
+                        <FlatList
+                            data={showSubscribedOnly ? (subscribedLeagues.slice(0, visibleCount)) : (filteredLeagues.slice(0, visibleCount))}
+                            keyExtractor={(item) => item.id}
+                            showsVerticalScrollIndicator={true}
+                            scrollEnabled={true}
+                            renderItem={({ item: league }) => {
+                                const isSubscribed = subscribedLeagues.some((l) => l.id === league.id);
+                                const isSelected = selectedLeagues?.some((l) => l.id === league.id)
 
-                                    return <Pressable
-                                        key={league.id}
-                                        onPress={() => handleLeagues(league)}
-                                        style={({ pressed }) => [
-                                            styles.card,
-                                            isSubscribed && styles.subscribedCard,
-                                            league && isSelected ? { borderColor: '#10b981', borderWidth: 2, backgroundColor: '#e6ffed' } : {},
-                                            isSelected && isSubscribed && styles.unSubscribedCard,
-                                            pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
-                                        ]}
-                                    >
-                                        <View style={styles.leagueRow}>
-                                            <Image
-                                                source={{ uri: league.logo }}
-                                                style={styles.logo}
-                                                resizeMode="contain"
-                                            />
-                                            <Text style={styles.leagueName}>{league.name}</Text>
-                                            {isSelected && <Text variant="bodySmall"> {isSubscribed ? "(Unsubscribing)" : "(Subscribing)"}</Text>}
-                                            {(isSubscribed && !isSelected) && <Text variant="bodySmall">  Subscribed</Text>}
-                                        </View>
-                                    </Pressable>
-                                }
-                                }
-                                onEndReached={handleLoadMore}
-                                onEndReachedThreshold={0.5}
-                                contentContainerStyle={{ paddingBottom: 250 }}
-                            />
+                                return <Pressable
+                                    key={league.id}
+                                    onPress={() => handleLeagues(league)}
+                                    style={({ pressed }) => [
+                                        styles.card,
+                                        isSubscribed && styles.subscribedCard,
+                                        league && isSelected ? { borderColor: '#10b981', borderWidth: 2, backgroundColor: '#e6ffed' } : {},
+                                        isSelected && isSubscribed && styles.unSubscribedCard,
+                                        pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+                                    ]}
+                                >
+                                    <View style={styles.leagueRow}>
+                                        {league.logo ? <Image
+                                            source={{ uri: league.logo }}
+                                            style={styles.logo}
+                                            resizeMode="contain"
+                                        /> : <Text>🏆</Text>}
+                                        <Text style={styles.leagueName}>{league.name}</Text>
+                                        {isSelected && <Text variant="bodySmall"> {isSubscribed ? "(Unsubscribing)" : "(Subscribing)"}</Text>}
+                                        {(isSubscribed && !isSelected) && <Text variant="bodySmall">  Subscribed</Text>}
+                                    </View>
+                                </Pressable>
+                            }
+                            }
+                            onEndReached={handleLoadMore}
+                            onEndReachedThreshold={0.5}
+                            contentContainerStyle={{ paddingBottom: 250 }}
+                        />
 
 
-                        </View>
-                    ) : (
-                        <Text style={styles.noResults}>No leagues found.</Text>
-                    )}
+                    </View>
+                ) : (
+                    <Text style={styles.noResults}>No leagues found.</Text>
+                )}
 
-                </View>
-            )}
+            </View>
             {(susbscribeChangeRef.current && selectedLeagues.length > 0) && (
                 <Pressable
                     onPress={saveChanges}

@@ -1,4 +1,6 @@
 import { MatchCardType, TeamType } from "@/types";
+import leagueList from '../data/leagueList.json';
+
 
 export const match: MatchCardType[] = [
     {
@@ -119,23 +121,28 @@ export const FILTERS: string[] = [
 ];
 
 export const popularLeaguesList = [
-    39,  // Premier League (England)
-    2,   // UEFA Champions League,
-    3, // UEFA EUROPA LEAGUE
-    307,
-    46, // UEFA EUROPA LEAGUE
-    140, // La Liga (Spain)
-    135, // Serie A (Italy)
-    78,  // Bundesliga (Germany)
-    61,  // Ligue 1 (France)
-    88, // Eredivisie (Netherlands),
-    848, // UEFA EUROPA LEAGUE
-    1186,
-    15,
-    598,
-
-
+    "PL",     // Premier League (England)
+    "CL",     // UEFA Champions League
+    "EL",     // UEFA Europa League
+    "PD",     // La Liga (Spain)
+    "SA",     // Serie A (Italy)
+    "BL1",    // Bundesliga (Germany)
+    "FL1",    // Ligue 1 (France)
+    "DED",    // Eredivisie (Netherlands)
+    "PPL",    // Primeira Liga (Portugal)
+    "BSA",    // Brasileirão Série A (Brazil)
+    "MLS",    // Major League Soccer (USA)
+    "WC",     // FIFA World Cup
+    "EC",     // European Championship (EURO)
+    "FAC", //FA cup
+    "UCL", //UEFA conference league,
+    "EL",
+    "UNL", //UEFA Nations league
+    "ESC"
 ];
+
+
+
 
 
 
@@ -151,65 +158,148 @@ export const formatDate = (dateInput: string | Date) => {
     return `${year}-${month}-${day}`;
 };
 
+//MATCH TRANSFORMER FOR API-FOOTBALL
+// export const matchTransformer = (match: any): MatchCardType => {
+//     const { fixture, league, teams, goals } = match;
 
+//     const date = new Date(fixture.date);
+//     const today = new Date();
+
+//     // Check if same day
+//     const isSameDay =
+//         date.getDate() === today.getDate() &&
+//         date.getMonth() === today.getMonth() &&
+//         date.getFullYear() === today.getFullYear();
+
+//     // Format startDay - only show "Today" if it's today, otherwise show full date
+//     const startDay = isSameDay ? 'Today' : date.toLocaleDateString('en-GB', {
+//         day: '2-digit',
+//         month: 'short',
+//         year: 'numeric'
+//     });
+
+//     // Format time (e.g., "9:11pm")
+//     let hours = date.getHours();
+//     const minutes = date.getMinutes().toString().padStart(2, '0');
+//     const ampm = hours >= 12 ? 'pm' : 'am';
+//     hours = hours % 12 || 12;
+//     const startTime = `${hours}:${minutes}${ampm}`;
+
+//     // Determine if live
+//     const shortStatus = fixture.status.short;
+//     const isLive = ['1H', '2H', 'ET', 'BT', 'P', 'SUSP', 'INT', 'LIVE'].includes(shortStatus);
+
+//     // Determine timeCurrentlyAt
+//     let timeCurrentlyAt: string | null = null;
+//     if (shortStatus === 'FT' || shortStatus === 'AET' || shortStatus === 'PEN') {
+//         timeCurrentlyAt = 'FT';
+//     } else if (shortStatus === 'HT') {
+//         timeCurrentlyAt = 'HT';
+//     } else if (isLive && fixture.status.elapsed) {
+//         timeCurrentlyAt = fixture.status.elapsed.toString();
+//     }
+
+//     return {
+//         id: fixture.id,
+//         league: league.name,
+//         leagueIcon: league.logo,
+//         startDay,
+//         startTime,
+//         isLive,
+//         timeCurrentlyAt,
+//         home: {
+//             clubIcon: teams.home.logo,
+//             clubName: teams.home.name,
+//             scored: goals.home,
+//         },
+//         away: {
+//             clubIcon: teams.away.logo,
+//             clubName: teams.away.name,
+//             scored: goals.away,
+//         },
+//         stadium: fixture.venue.name || 'Stadium TBD',
+//     };
+// };
+
+
+//MATCH TRANSFORMER FOR FOOTBALL-DATA.ORG
 export const matchTransformer = (match: any): MatchCardType => {
-    const { fixture, league, teams, goals } = match;
+    console.log(match, 'match gotten in the transformer');
+    if (!match) return null as any;
 
-    const date = new Date(fixture.date);
-    const today = new Date();
+    const date = new Date(match.utcDate);
+    const now = new Date();
 
-    // Check if same day
-    const isSameDay =
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear();
+    const isToday = date.toDateString() === now.toDateString();
+    const isLive = match.status === "IN_PLAY" || match.status === "PAUSED";
 
-    // Format startDay - only show "Today" if it's today, otherwise show full date
-    const startDay = isSameDay ? 'Today' : date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    });
-
-    // Format time (e.g., "9:11pm")
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12 || 12;
-    const startTime = `${hours}:${minutes}${ampm}`;
-
-    // Determine if live
-    const shortStatus = fixture.status.short;
-    const isLive = ['1H', '2H', 'ET', 'BT', 'P', 'SUSP', 'INT', 'LIVE'].includes(shortStatus);
 
     // Determine timeCurrentlyAt
     let timeCurrentlyAt: string | null = null;
-    if (shortStatus === 'FT' || shortStatus === 'AET' || shortStatus === 'PEN') {
-        timeCurrentlyAt = 'FT';
-    } else if (shortStatus === 'HT') {
-        timeCurrentlyAt = 'HT';
-    } else if (isLive && fixture.status.elapsed) {
-        timeCurrentlyAt = fixture.status.elapsed.toString();
+
+    if (match.status === "FINISHED") {
+        timeCurrentlyAt = "FT";
+    }
+    else if (match.status === "PAUSED") {
+        timeCurrentlyAt = "HT"; // halftime
+    }
+    else if (match.status === "IN_PLAY") {
+        timeCurrentlyAt = match.minute?.toString() || '--:--'; // free tier will usually be null
     }
 
+
+
+
+
+
     return {
-        id: fixture.id,
-        league: league.name,
-        leagueIcon: league.logo,
-        startDay,
-        startTime,
+        id: match.id,
+
+        league: match.competition?.name || "",
+        leagueIcon: match.competition?.emblem || "",
+
+        startDay: isToday ? "Today" : date.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+        }),
+
+        startTime: date.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+        }),
+
         isLive,
+
         timeCurrentlyAt,
+
         home: {
-            clubIcon: teams.home.logo,
-            clubName: teams.home.name,
-            scored: goals.home,
+            clubIcon: match.homeTeam?.crest,
+            clubName: match.homeTeam?.shortName || match.homeTeam?.name,
+            scored: match.score?.fullTime?.home ?? null,
         },
+
         away: {
-            clubIcon: teams.away.logo,
-            clubName: teams.away.name,
-            scored: goals.away,
+            clubIcon: match.awayTeam?.crest,
+            clubName: match.awayTeam?.shortName || match.awayTeam?.name,
+            scored: match.score?.fullTime?.away ?? null,
         },
-        stadium: fixture.venue.name || 'Stadium TBD',
+
+        // Football-data.org DOES NOT provide stadium / venue in free tier
+        stadium: "Unknown Stadium",
     };
 };
+
+
+export const formatedtLeaguexy = () => {
+    const leagues = leagueList.competitions.map((league: any) => {
+        return {
+            id: league?.code,
+            name: league.name,
+            logo: league.emblem,
+            type: league.type,
+            country: league.area.name
+        }
+    })
+    return leagues
+}

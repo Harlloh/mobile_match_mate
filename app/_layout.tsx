@@ -4,7 +4,6 @@ import 'react-native-reanimated';
 
 import { UserProvider } from '@/context/appContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import RouteGaurd from '@/lib/routeGuard';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export const unstable_settings = {
@@ -57,11 +56,11 @@ export default function RootLayout() {
     <UserProvider>
       <PaperProvider theme={theme}>
         <SafeAreaProvider>
-          <RouteGaurd>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </RouteGaurd>
+          {/* <RouteGaurd> */}
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+          {/* </RouteGaurd> */}
         </SafeAreaProvider>
       </PaperProvider>
     </UserProvider>

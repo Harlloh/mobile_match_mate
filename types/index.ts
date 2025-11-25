@@ -49,7 +49,7 @@ export type TeamType = {
 }
 export type LeagueType = {
     name: string,
-    id: number,
+    id: string,
     logo?: string,
     type?: string,
     country?: string,

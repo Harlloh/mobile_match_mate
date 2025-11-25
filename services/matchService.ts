@@ -1,25 +1,29 @@
 import { matchTransformer } from "@/lib/utils";
+import { LeagueType } from "@/types";
 import api from "./api";
 
-export const getFixturesByDate = async (date: string) => {
+export const getFixturesByLeagues = async (date: string, leagueIds: LeagueType[]) => {
     try {
-        const res = await api.get('/fixtures', {
-            params: { date }
-        })
-        const matches = res.data.response.map(matchTransformer)
-        return matches
+        const promises = leagueIds?.map((league) => (
+            api.get(`/competitions/${league.id}/matches`, {
+                params: {
+                    dateFrom: date,
+                    dateTo: date,
+                }
+            })
+        ))
+        const responses = await Promise.all(promises);
+        const rawMatches = responses.flatMap(res => res.data.matches ?? []);
+
+
+        const allMatches = rawMatches.map(matchTransformer);
+
+        console.log(allMatches, "All matches for all leagues", '**********');
+        console.log("All matches for all leagues", rawMatches, '##############');
+        return allMatches;
     } catch (error: any) {
         console.error('Error fetching fixtures: ', error)
         throw error
     }
 }
 
-export const getLeagues = async () => {
-    try {
-        const res = await api.get('/leagues')
-        return res
-    } catch (error) {
-        console.error('Error fetching leagues: ', error)
-        throw error
-    }
-}
