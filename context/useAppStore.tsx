@@ -5,18 +5,18 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface AppState {
     subscribedLeagues: LeagueType[],
-    hateList: TeamType[],
+    hateTeamList: TeamType[],
     favList: TeamType[],
     setSubscribedLeagues: (leagues: LeagueType[]) => void,
     setFavList: (team: TeamType) => void,
-    setHateList: (team: TeamType) => void
+    setHateTeamList: (team: TeamType) => void
 }
 
 export const useAppStore = create<AppState>()(
     persist(
         (set) => ({
             subscribedLeagues: [],
-            hateList: [],
+            hateTeamList: [],
             favList: [],
 
             // update state
@@ -36,13 +36,13 @@ export const useAppStore = create<AppState>()(
                 })
             },
 
-            setHateList: (team: TeamType) => {
+            setHateTeamList: (team: TeamType) => {
                 set(state => {
-                    const exists = state.hateList.some(item => item.id === team.id)
+                    const exists = state.hateTeamList.some(item => item.id === team.id)
 
-                    const updated = exists ? state.hateList.filter(item => item.id !== team.id) : [...state.hateList, team];
-
-                    return { hateList: updated }
+                    const updated = exists ? state.hateTeamList.filter(item => item.id !== team.id) : [...state.hateTeamList, team];
+                    console.log('Added to the hate list', updated)
+                    return { hateTeamList: updated }
                 })
             },
 

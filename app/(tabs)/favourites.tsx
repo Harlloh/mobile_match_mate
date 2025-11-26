@@ -8,7 +8,7 @@ import { Text, TextInput } from "react-native-paper";
 import teams from '../../data/teams.json';
 
 function FavouritesScreen() {
-    const { setFavList, favList, } = useAppStore()
+    const { setFavList, setHateTeamList, favList, hateTeamList } = useAppStore()
     // const {setFavList, setHateList,favList, hateList} = useAppStore()
     const tabs = ["Favourites", "Hate Watch"];
     const [list, setList] = useState<(TeamType)[]>([]);
@@ -46,13 +46,15 @@ function FavouritesScreen() {
                 return exists ? prev.filter((fav) => fav.id !== item.id) : [...prev, item];
             });
             setFavList(item)
+            console.log("Favourites:", favList);
         } else {
             setHateList((prev) => {
                 const exists = prev.some((hate) => hate.id === item.id);
                 return exists ? prev.filter((hate) => hate.id !== item.id) : [...prev, item];
             });
+            setHateTeamList(item)
+            console.log("Hate List:", hateList);
         }
-        console.log("Favourites:", favourites);
 
     };
 
@@ -90,7 +92,10 @@ function FavouritesScreen() {
 
 
 
-
+    // useEffect(() => {
+    //     console.log(favList, '*******', hateTeamList);
+    //     AsyncStorage.removeItem('app-storage')
+    // }, [])
 
 
     return (
