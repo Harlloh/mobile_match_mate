@@ -73,11 +73,10 @@ function MatchesScreen() {
     }
 
     useEffect(() => {
-        console.log('Current filters', { activeFilter, date })
+        // console.log('Current filters', { activeFilter, date })
         if (loading) return
 
         const filtered = getFilteredMatches();
-        console.log(filtered, 'final filtered list', ' it should contain all list but filtered')
         setFilteredMatch(filtered);
 
     }, [activeFilter, date, loading, match])

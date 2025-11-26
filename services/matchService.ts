@@ -25,3 +25,4 @@ export const getFixturesByLeagues = async (date: string, leagueIds: LeagueType[]
     }
 }
 
+

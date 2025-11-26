@@ -1,10 +1,11 @@
 import TeamCard from "@/components/teamCard";
 import { useAppStore } from "@/context/useAppStore";
-import { teams } from "@/lib/utils";
-import { LeagueType, TeamType } from "@/types";
+// import { teams } from "@/lib/utils";
+import { TeamType } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Keyboard, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
+import teams from '../../data/teams.json';
 
 function FavouritesScreen() {
     const { setFavList, favList, } = useAppStore()
@@ -55,7 +56,7 @@ function FavouritesScreen() {
 
     };
 
-    const isItemInList = (list: (TeamType | LeagueType)[], id: string | number) =>
+    const isItemInList = (list: (TeamType)[], id: string | number) =>
         list.some((item) => item.id === id);
 
 
@@ -87,10 +88,10 @@ function FavouritesScreen() {
 
 
 
-    // useEffect(() => {
-    //     console.log("Favourites updated:", favourites);
-    //     // console.log("Hate list updated:", hateList);
-    // }, [favourites, hateList])
+
+
+
+
 
     return (
         <View style={[styles.container]}>
