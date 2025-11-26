@@ -26,7 +26,7 @@ function MatchCard({ match }: { match: MatchCardType }) {
                         </Text>
                     ) : match.isLive ? (
                         <View style={styles.livebadge}>
-                            <Text style={styles.liveText}>LIVE {match.timeCurrentlyAt}'</Text>
+                            <Text style={styles.liveText}>LIVE {match.timeCurrentlyAt}</Text>
                         </View>
                     ) : (
                         <View>

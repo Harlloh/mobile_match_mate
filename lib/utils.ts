@@ -243,7 +243,7 @@ export const matchTransformer = (match: any): MatchCardType => {
         timeCurrentlyAt = "HT"; // halftime
     }
     else if (match.status === "IN_PLAY") {
-        timeCurrentlyAt = match.minute?.toString() || '--:--'; // free tier will usually be null
+        timeCurrentlyAt = match.minute?.toString() || null; // free tier will usually be null
     }
 
 

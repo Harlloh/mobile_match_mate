@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/appContext";
 import { useAppStore } from "@/context/useAppStore";
 import { formatedtLeaguexy, popularLeaguesList } from "@/lib/utils";
 import { LeagueType } from "@/types";
@@ -8,6 +9,7 @@ import { Text, TextInput } from "react-native-paper";
 function LeaguesScreen() {
     const popularLeagues = popularLeaguesList
     const { subscribedLeagues, setSubscribedLeagues } = useAppStore();
+    const { user } = useAuth()
 
     const leagues = useMemo(() => formatedtLeaguexy(), []);
     const [formattedLeagues, setFormattedLeagues] = useState<LeagueType[] | []>([])
@@ -71,7 +73,6 @@ function LeaguesScreen() {
             const filtered = leagueList.filter((item: LeagueType) => item.name.toLowerCase().includes(text.toLowerCase().trim()));
             setFilteredLeagues(filtered)
         }, 200)
-        console.log(filteredLeagues)
     }
 
     const handleLeagues = (league: LeagueType) => {

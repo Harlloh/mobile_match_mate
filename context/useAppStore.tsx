@@ -1,3 +1,4 @@
+import { susbscribeToLeages } from '@/services/matchService';
 import { LeagueType, TeamType } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
@@ -30,10 +31,12 @@ export const useAppStore = create<AppState>()(
                             ? state.subscribedLeagues.filter((item) => item.id !== league.id)
                             : [...state.subscribedLeagues, league];
 
-
+                        console.log('Updated subscribed leagues:', updated);
+                        susbscribeToLeages(updated)
                         return { subscribedLeagues: updated };
                     });
                 })
+
             },
 
             setHateTeamList: (team: TeamType) => {

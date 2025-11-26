@@ -10,12 +10,11 @@ export const useHomeMatchesFixtures = (date: string) => {
 
     useEffect(() => {
         let isMounted = true;
-
         const fetchMatches = async () => {
             try {
                 setLoading(true);
-                const data = await getFixturesByLeagues(date, subscribedLeagues);
-                if (isMounted) setMatches(data);
+                const data = subscribedLeagues.length > 0 && await getFixturesByLeagues(date, subscribedLeagues);
+                if (isMounted && data) setMatches(data);
             } catch (err: any) {
                 if (isMounted) setError(err.message || 'Failed to load matches');
             } finally {

@@ -1,3 +1,4 @@
+import { HelloWave } from '@/components/hello-wave';
 import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
 import { useAppStore } from '@/context/useAppStore';
@@ -20,7 +21,7 @@ export default function HomeScreen() {
   // const [activeList, setActiveList] = useState<MatchCardType[] | []>([])
   const today = new Date().toISOString().split('T')[0];
 
-  const { match } = useHomeMatchesFixtures(today)
+  const { match, loading, error } = useHomeMatchesFixtures(today)
 
   // const match: MatchCardType[] = useMemo<MatchCardType[]>(() =>
   //   [
@@ -138,11 +139,18 @@ export default function HomeScreen() {
 
 
 
+
   if (subscribedLeagues.length < 0) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Please subscribe to leagues to see matches.</Text>
       </View>
+    )
+  }
+
+  if (loading) {
+    return (
+      <HelloWave message='fetching matches for today...' />
     )
   }
 

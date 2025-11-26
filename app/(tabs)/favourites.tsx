@@ -16,9 +16,6 @@ function FavouritesScreen() {
     const [type, setType] = useState<"favourite" | "hate">("favourite");
     const [searchText, setSearchText] = useState<string>('')
 
-    // Store full objects instead of just IDs
-    const [favourites, setFavourites] = useState<(TeamType)[]>([]);
-    const [hateList, setHateList] = useState<(TeamType)[]>([]);
 
     const sourceList = useMemo(() => {
         if (activeList === "Favourites") return teams;
@@ -41,19 +38,11 @@ function FavouritesScreen() {
 
     const handleToggle = (item: TeamType, toggleType: "favourite" | "hate") => {
         if (toggleType === "favourite") {
-            setFavourites((prev) => {
-                const exists = prev.some((fav) => fav.id === item.id);
-                return exists ? prev.filter((fav) => fav.id !== item.id) : [...prev, item];
-            });
             setFavList(item)
             console.log("Favourites:", favList);
         } else {
-            setHateList((prev) => {
-                const exists = prev.some((hate) => hate.id === item.id);
-                return exists ? prev.filter((hate) => hate.id !== item.id) : [...prev, item];
-            });
             setHateTeamList(item)
-            console.log("Hate List:", hateList);
+            console.log("Hate List:", hateTeamList);
         }
 
     };
@@ -142,16 +131,16 @@ function FavouritesScreen() {
                         team={item}
                         isSelected={
                             type === "favourite"
-                                ? isItemInList(favourites, item.id)
-                                : isItemInList(hateList, item.id)
+                                ? isItemInList(favList, item.id)
+                                : isItemInList(hateTeamList, item.id)
                         }
                         isBlurred={
-                            (type === "hate" && isItemInList(favourites, item.id)) ||
-                            (type === "favourite" && isItemInList(hateList, item.id))
+                            (type === "hate" && isItemInList(favList, item.id)) ||
+                            (type === "favourite" && isItemInList(hateTeamList, item.id))
                         }
                         onToggle={() => handleToggle(item, type)}
-                        onHateList={type === "hate" && isItemInList(favourites, item.id)}
-                        onFavList={type === "favourite" && isItemInList(hateList, item.id)}
+                        onHateList={type === "hate" && isItemInList(favList, item.id)}
+                        onFavList={type === "favourite" && isItemInList(hateTeamList, item.id)}
                     />
                 )}
                 contentContainerStyle={{

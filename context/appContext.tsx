@@ -45,6 +45,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 alert(error.message || 'An error occurred while signing you in...')
                 return { error, success: false }
             }
+            // getSubscribedLeagues()
             return { success: true, data }
         } catch (error) {
             alert('An error occurred while signing up')
@@ -58,6 +59,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
         setUser(null)
         setSession(null)
+        AsyncStorage.removeItem('app-storage')
     }
     const loadOnboarding = async () => {
         try {
