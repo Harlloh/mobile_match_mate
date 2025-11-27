@@ -1,7 +1,7 @@
 import { useAppStore } from "@/context/useAppStore";
 import { supabase } from "@/lib/supabase";
 import { matchTransformer } from "@/lib/utils";
-import { LeagueType, TeamType } from "@/types";
+import { LeagueType, PreferenceType, TeamType } from "@/types";
 import api from "./api";
 
 
@@ -149,5 +149,76 @@ export const getTeamsList = async (type: 'favourite' | 'hate') => {
         throw error;
     }
 }
+
+
+
+
+
+export const syncNotificationPreference = async (preference: PreferenceType) => {
+    console.log('Syncing preference...', preference);
+    try {
+        const { data, error } = await supabase
+            .from('user_preferences')
+            .upsert(
+                {
+                    enable_reminders: preference.enableReminders,
+                    reminder_time: preference.reminderTime
+                },
+                { onConflict: 'user_id' } // 👈 very important
+
+            )
+            .select()
+            .single();
+
+        if (error) throw error
+
+        console.log('Successfully synced preferences:', data);
+        return data;
+    } catch (error) {
+        console.error('Error syncing preferences:', error);
+        throw error;
+    }
+}
+
+export const getNotificationPreference = async () => {
+    try {
+        const { data, error } = await supabase
+            .from("user_preferences")
+            .select("enableReminders, reminderTime")
+            .single(); // get only the row for the logged-in user (RLS applies)
+
+        if (error) {
+            // No preference created yet for this user
+            if (error.code === "PGRST116") {
+                console.log("No notification preference found — using defaults");
+
+                const defaultPref: PreferenceType = {
+                    enableReminders: true,
+                    reminderTime: 30,
+                };
+
+                // Set Zustand directly (DO NOT call updatePreference)
+                useAppStore.setState({ preference: defaultPref });
+
+                return defaultPref;
+            }
+
+            throw error;
+        }
+
+        const pref: PreferenceType = {
+            enableReminders: data.enableReminders ?? true,
+            reminderTime: data.reminderTime ?? 30,
+        };
+
+        // Update Zustand without triggering backend sync
+        useAppStore.setState({ preference: pref });
+
+        return pref;
+    } catch (error) {
+        console.error("Error fetching notification preferences:", error);
+        throw error;
+    }
+};
 
 

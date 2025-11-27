@@ -1,29 +1,23 @@
 import { useAuth } from '@/context/appContext';
+import { useAppStore } from '@/context/useAppStore';
 import Slider from '@react-native-community/slider';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Switch, Text } from "react-native-paper";
 
 function ProfileScreen() {
     const { user, signOut, } = useAuth()
+    const { updatePreference, preference } = useAppStore()
     const [isLoading, setIsLoading] = useState(false)
-    const [settings, setSettings] = useState({
-        enableReminders: true,
-        reminderTime: 30,
-        bigMatchAlerts: false,
-        goalsOnly: true,
-        keyEvents: true,
-    });
-
-    const handleToggle = (key: keyof typeof settings) => {
-        setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
-    };
 
 
 
-    useEffect(() => {
-        console.log(settings)
-    }, [settings])
+
+
+    // useEffect(() => {
+    //     console.log(settings)
+    //     updatePreference(settings)
+    // }, [settings])
 
     const handleSignOut = async () => {
         try {
@@ -57,6 +51,7 @@ function ProfileScreen() {
                     <Text style={styles.avatarText}>{user?.user_metadata.display_name.charAt(0)}</Text>
                 </View>
                 <Text style={styles.name}>{user?.user_metadata.display_name}</Text>
+                <Text style={[styles.subText, { marginBottom: 6 }]}> {user?.email}</Text>
                 <Text style={styles.subText}>Joined since {formatDate(user?.confirmed_at)}</Text>
                 <Button disabled={isLoading} onPress={() => handleSignOut()} mode="text" textColor="#ef4444" style={{ marginTop: 10 }}>
                     {isLoading ? 'Signing out..' : 'Sign Out'}
@@ -70,8 +65,8 @@ function ProfileScreen() {
                 <View style={styles.settingRow}>
                     <Text style={styles.settingLabel}>Enable Push Notification</Text>
                     <Switch
-                        value={settings.enableReminders}
-                        onValueChange={() => handleToggle("enableReminders")}
+                        value={preference.enableReminders}
+                        onValueChange={() => updatePreference({ enableReminders: !preference.enableReminders })}
                         color="#10b981"
                     />
                 </View>
@@ -81,7 +76,7 @@ function ProfileScreen() {
                 <Text style={[styles.subText, { marginTop: 12 }]}>
                     Reminder time:{" "}
                     <Text style={{ color: "#10b981", fontWeight: "500" }}>
-                        {settings.reminderTime} minutes before kickoff
+                        {preference.reminderTime} minutes before kickoff
                     </Text>
                 </Text>
 
@@ -90,9 +85,9 @@ function ProfileScreen() {
                     minimumValue={5}
                     maximumValue={60}
                     step={5}
-                    value={settings.reminderTime}
+                    value={preference.reminderTime}
                     onValueChange={(value) =>
-                        setSettings((prev) => ({ ...prev, reminderTime: value }))
+                        updatePreference({ reminderTime: value })
                     }
                     minimumTrackTintColor="#10b981"
                     maximumTrackTintColor="#1f2937"
@@ -101,48 +96,7 @@ function ProfileScreen() {
             </View>
 
             {/* 📣 Notification Settings */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Notification Settings</Text>
 
-                {/* Big Match Alerts */}
-                <View style={styles.settingRow}>
-                    <Text style={styles.settingLabel}>Big Match Alerts</Text>
-                    <Switch
-                        value={settings.bigMatchAlerts}
-                        onValueChange={() => handleToggle("bigMatchAlerts")}
-                        color="#10b981"
-                    />
-                </View>
-                <Text style={styles.subText}>
-                    Get notified about major matches even if you don’t follow the teams
-                </Text>
-
-                {/* Divider */}
-                <View style={styles.divider} />
-
-                {/* Goals Only */}
-                <View style={styles.settingRow}>
-                    <Text style={styles.settingLabel}>Goals Only</Text>
-                    <Switch
-                        value={settings.goalsOnly}
-                        onValueChange={() => handleToggle("goalsOnly")}
-                        color="#10b981"
-                    />
-                </View>
-
-                {/* Key Events */}
-                <View style={styles.settingRow}>
-                    <Text style={styles.settingLabel}>Key Events</Text>
-                    <Switch
-                        value={settings.keyEvents}
-                        onValueChange={() => handleToggle("keyEvents")}
-                        color="#10b981"
-                    />
-                </View>
-                <Text style={styles.subText}>
-                    Receive alerts for goals, cards, and major match events
-                </Text>
-            </View>
 
             {/* ⚽ Footer */}
             <Text style={styles.footerText}>

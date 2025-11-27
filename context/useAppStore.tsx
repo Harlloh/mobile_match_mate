@@ -1,14 +1,16 @@
-import { susbscribeToLeages, syncTeamsList } from '@/services/matchService';
-import { LeagueType, TeamType } from '@/types';
+import { susbscribeToLeages, syncNotificationPreference, syncTeamsList } from '@/services/matchService';
+import { LeagueType, PreferenceType, TeamType } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface AppState {
+    preference: PreferenceType,
     subscribedLeagues: LeagueType[],
     hateTeamList: TeamType[],
     hasHydrated: boolean,
     favList: TeamType[],
+    updatePreference: (preference: PreferenceType) => void,
     setSubscribedLeagues: (leagues: LeagueType[]) => void,
     setFavList: (team: TeamType) => void,
     setHateTeamList: (team: TeamType) => void
@@ -21,10 +23,24 @@ export const useAppStore = create<AppState>()(
             hateTeamList: [],
             favList: [],
             hasHydrated: false,
+            preference: {
+                enableReminders: true,
+                reminderTime: 30
+            },
+
+            updatePreference: (preference: PreferenceType) => {
+                // if (!get().hasHydrated) return;
+                set(state => {
+                    const updated = { ...state.preference, ...preference }
+                    syncNotificationPreference(updated).catch(console.error)
+                    return { preference: updated };
+                })
+
+            },
 
             // update state
             setSubscribedLeagues: (league) => {
-                if (!get().hasHydrated) return;
+                // if (!get().hasHydrated) return;
 
                 league.forEach((league) => {
                     set((state) => {
@@ -44,7 +60,7 @@ export const useAppStore = create<AppState>()(
             },
 
             setHateTeamList: (team: TeamType) => {
-                if (!get().hasHydrated) return;
+                // if (!get().hasHydrated) return;
 
                 set(state => {
                     const exists = state.hateTeamList.some(item => item.id === team.id)
@@ -58,7 +74,7 @@ export const useAppStore = create<AppState>()(
 
 
             setFavList: (team: TeamType) => {
-                if (!get().hasHydrated) return;
+                // if (!get().hasHydrated) return;
 
                 set(state => {
                     const exists = state.favList.some(item => item.id === team.id)
@@ -74,11 +90,11 @@ export const useAppStore = create<AppState>()(
         {
             name: 'app-storage',
             storage: createJSONStorage(() => AsyncStorage),
-            onRehydrateStorage: () => (state) => {
-                if (state) {
-                    state.hasHydrated = true;
-                }
-            }
+            // onRehydrateStorage: () => (state) => {
+            //     if (state) {
+            //         state.hasHydrated = true;
+            //     }
+            // }
         }
     )
 );

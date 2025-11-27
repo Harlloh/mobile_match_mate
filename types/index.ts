@@ -47,6 +47,10 @@ export type TeamType = {
     icon: string;
     id: string | number
 }
+export type PreferenceType = {
+    enableReminders?: boolean,
+    reminderTime?: number
+}
 export type LeagueType = {
     name: string,
     id: string,

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { getSubscribedLeagues, getTeamsList } from "@/services/matchService";
+import { getNotificationPreference, getSubscribedLeagues, getTeamsList } from "@/services/matchService";
 import { AuthContextType } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Session, User } from "@supabase/supabase-js";
@@ -50,7 +50,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             await Promise.all([
                 getSubscribedLeagues(),
                 getTeamsList('favourite'),
-                getTeamsList('hate')
+                getTeamsList('hate'),
+                getNotificationPreference()
             ])
             return { success: true, data }
         } catch (error) {
