@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getSubscribedLeagues, getTeamsList } from "@/services/matchService";
 import { AuthContextType } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Session, User } from "@supabase/supabase-js";
@@ -45,7 +46,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 alert(error.message || 'An error occurred while signing you in...')
                 return { error, success: false }
             }
-            // getSubscribedLeagues()
+            // await getSubscribedLeagues()
+            await Promise.all([
+                getSubscribedLeagues(),
+                getTeamsList('favourite'),
+                getTeamsList('hate')
+            ])
             return { success: true, data }
         } catch (error) {
             alert('An error occurred while signing up')
@@ -60,6 +66,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUser(null)
         setSession(null)
         AsyncStorage.removeItem('app-storage')
+        AsyncStorage.clear()
     }
     const loadOnboarding = async () => {
         try {
