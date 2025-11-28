@@ -38,7 +38,9 @@ export interface MatchCardType {
     home: ClubsType;  // Changed from teams array
     away: ClubsType;  // Changed from teams array
     stadium: string;
-    id?: number
+    id?: number,
+    isAlarmSet: boolean,
+    utcDate?: string
 }
 
 

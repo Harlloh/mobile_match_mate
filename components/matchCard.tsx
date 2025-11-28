@@ -1,8 +1,17 @@
+import { useAppStore } from "@/context/useAppStore";
+import { setMatchAlert } from "@/services/matchService";
 import { MatchCardType } from "@/types";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 function MatchCard({ match }: { match: MatchCardType }) {
+    const { preference, alertedMatches } = useAppStore()
+
+    const setAlarmForMatch = async (match: MatchCardType) => {
+        if (preference && preference.reminderTime !== undefined) await setMatchAlert(match, preference.reminderTime);
+    }
+
+    const isAlerted = alertedMatches.includes(match.id || -1)
     return (
         <View style={styles.cardContainer}>
             {/* Header: League & Time/Live */}
@@ -85,9 +94,9 @@ function MatchCard({ match }: { match: MatchCardType }) {
                 {(!match.isLive && !match.timeCurrentlyAt) && (
                     <Button
                         textColor="#10b981"
-                        onPress={() => console.log('Set Reminder for this match', match)}
+                        onPress={() => setAlarmForMatch(match)}
                     >
-                        Set Alert
+                        {isAlerted ? 'Alert Set' : 'Set Alert'}
                     </Button>
                 )}
             </View>

@@ -1,7 +1,7 @@
 import { useAppStore } from "@/context/useAppStore";
 import { supabase } from "@/lib/supabase";
 import { matchTransformer } from "@/lib/utils";
-import { LeagueType, PreferenceType, TeamType } from "@/types";
+import { LeagueType, MatchCardType, PreferenceType, TeamType } from "@/types";
 import api from "./api";
 
 
@@ -184,7 +184,7 @@ export const getNotificationPreference = async () => {
     try {
         const { data, error } = await supabase
             .from("user_preferences")
-            .select("enableReminders, reminderTime")
+            .select("enable_reminders, reminder_time")
             .single(); // get only the row for the logged-in user (RLS applies)
 
         if (error) {
@@ -207,8 +207,8 @@ export const getNotificationPreference = async () => {
         }
 
         const pref: PreferenceType = {
-            enableReminders: data.enableReminders ?? true,
-            reminderTime: data.reminderTime ?? 30,
+            enableReminders: data.enable_reminders ?? true,
+            reminderTime: data.reminder_time ?? 30,
         };
 
         // Update Zustand without triggering backend sync
@@ -222,3 +222,53 @@ export const getNotificationPreference = async () => {
 };
 
 
+export const setMatchAlert = async (match: MatchCardType, reminder_time: number) => {
+    const payload = {
+        match_id: match.id,
+        reminder_time,
+        home_team: match.home.clubName,
+        away_team: match.away.clubName,
+        home_team_icon: match.home.clubIcon,
+        away_team_icon: match.away.clubIcon,
+        match_start: match.utcDate,
+        match_time_text: `${match.startDay} ${match.startTime}`,
+    };
+
+    try {
+        const { data, error } = await supabase
+            .from('match_alerts')
+            .upsert(payload, { onConflict: 'user_id,match_id' })
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        // 🔥 Update Zustand so UI updates instantly
+        useAppStore.setState((state: any) => ({
+            alertedMatches: [...new Set([...state.alertedMatches, payload.match_id])]
+        }));
+
+        return data;
+    } catch (error) {
+        console.error("Error setting match alert:", error);
+    }
+};
+
+
+export const getAlertedMatches = async () => {
+    try {
+        const { data, error } = await supabase
+            .from('match_alerts')
+            .select('match_id');
+
+        if (error) throw error;
+
+        const ids = data?.map(item => item.match_id) ?? [];
+
+        useAppStore.setState({ alertedMatches: ids });
+        return ids;
+    } catch (error) {
+        console.error("Error fetching alerted matches:", error);
+        return [];
+    }
+};

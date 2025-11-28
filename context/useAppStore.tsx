@@ -7,13 +7,15 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 interface AppState {
     preference: PreferenceType,
     subscribedLeagues: LeagueType[],
+    alertedMatches: number[],
     hateTeamList: TeamType[],
     hasHydrated: boolean,
     favList: TeamType[],
     updatePreference: (preference: PreferenceType) => void,
     setSubscribedLeagues: (leagues: LeagueType[]) => void,
     setFavList: (team: TeamType) => void,
-    setHateTeamList: (team: TeamType) => void
+    setHateTeamList: (team: TeamType) => void,
+    setAlertedMatches: (ids: number[]) => void,
 }
 
 export const useAppStore = create<AppState>()(
@@ -27,6 +29,10 @@ export const useAppStore = create<AppState>()(
                 enableReminders: true,
                 reminderTime: 30
             },
+            alertedMatches: [],
+
+            setAlertedMatches: (ids) => set({ alertedMatches: ids }),
+
 
             updatePreference: (preference: PreferenceType) => {
                 // if (!get().hasHydrated) return;

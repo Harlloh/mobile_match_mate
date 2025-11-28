@@ -20,7 +20,9 @@ export const match: MatchCardType[] = [
             clubName: 'PSG',
             scored: 1
         },
-        stadium: 'Old Stanford Bridge'
+        stadium: 'Old Stanford Bridge',
+        isAlarmSet: false,
+
     },
     {
         league: 'Premier League',
@@ -39,7 +41,9 @@ export const match: MatchCardType[] = [
             clubName: 'New Castle',
             scored: null
         },
-        stadium: 'Emirates Stadium'
+        stadium: 'Emirates Stadium',
+        isAlarmSet: false,
+
     },
     {
         league: 'Premier League',
@@ -58,7 +62,9 @@ export const match: MatchCardType[] = [
             clubName: 'New Castle',
             scored: null
         },
-        stadium: 'Emirates Stadium'
+        stadium: 'Emirates Stadium',
+        isAlarmSet: false,
+
     },
     {
         league: 'Premier League',
@@ -77,7 +83,9 @@ export const match: MatchCardType[] = [
             clubName: 'PSG',
             scored: 1
         },
-        stadium: 'Old Stanford Bridge'
+        stadium: 'Old Stanford Bridge',
+        isAlarmSet: false,
+
     },
     {
         league: 'Premier League',
@@ -96,7 +104,9 @@ export const match: MatchCardType[] = [
             clubName: 'PSG',
             scored: 1
         },
-        stadium: 'Old Stanford Bridge'
+        stadium: 'Old Stanford Bridge',
+        isAlarmSet: false,
+
     },
 
 ];
@@ -253,6 +263,7 @@ export const matchTransformer = (match: any): MatchCardType => {
 
     return {
         id: match.id,
+        isAlarmSet: false,
 
         league: match.competition?.name || "",
         leagueIcon: match.competition?.emblem || "",
@@ -262,6 +273,7 @@ export const matchTransformer = (match: any): MatchCardType => {
             month: "short",
             day: "numeric",
         }),
+        utcDate: match.utcDate,
 
         startTime: date.toLocaleTimeString("en-US", {
             hour: "numeric",
