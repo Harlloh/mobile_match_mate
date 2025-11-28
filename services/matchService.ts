@@ -272,3 +272,26 @@ export const getAlertedMatches = async () => {
         return [];
     }
 };
+
+
+
+export const removeMatchAlerts = async (match_id: number) => {
+    try {
+        const { error } = await supabase
+            .from('match_alerts')
+            .delete()
+            .eq('match_id', match_id);
+
+        if (error) throw error;
+
+        // Update zustand
+        useAppStore.setState((state) => ({
+            alertedMatches: state.alertedMatches.filter(id => id !== match_id)
+        }));
+
+        return true;
+    } catch (error) {
+        console.error("Error removing match alert:", error);
+        return false;
+    }
+};

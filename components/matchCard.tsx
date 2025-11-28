@@ -1,5 +1,5 @@
 import { useAppStore } from "@/context/useAppStore";
-import { setMatchAlert } from "@/services/matchService";
+import { removeMatchAlerts, setMatchAlert } from "@/services/matchService";
 import { MatchCardType } from "@/types";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
@@ -93,10 +93,15 @@ function MatchCard({ match }: { match: MatchCardType }) {
                 </Text>
                 {(!match.isLive && !match.timeCurrentlyAt) && (
                     <Button
-                        textColor="#10b981"
-                        onPress={() => setAlarmForMatch(match)}
+                        textColor={isAlerted ? "#e13302ff" : "#10b981"}
+                        // onPress={() => setAlarmForMatch(match)}
+                        onPress={() =>
+                            isAlerted
+                                ? removeMatchAlerts(match.id as any)
+                                : setMatchAlert(match, preference.reminderTime as any)
+                        }
                     >
-                        {isAlerted ? 'Alert Set' : 'Set Alert'}
+                        {isAlerted ? 'Cancel Alert' : 'Set Alert'}
                     </Button>
                 )}
             </View>
