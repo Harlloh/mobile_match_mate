@@ -1,4 +1,5 @@
-import { HelloWave } from '@/components/hello-wave';
+import ErrorScreen from '@/components/errorScreen';
+import { LoadingState } from '@/components/hello-wave';
 import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
 import { useAppStore } from '@/context/useAppStore';
@@ -7,7 +8,7 @@ import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 
@@ -18,10 +19,11 @@ export default function HomeScreen() {
   const [upcomingList, setUpcomingList] = useState<MatchCardType[] | []>([]);
   const [finishedList, setFinishedList] = useState<MatchCardType[] | []>([]);
   const [liveList, setLiveList] = useState<MatchCardType[] | []>([])
+  const [refreshing, setRefreshing] = useState(false)
   // const [activeList, setActiveList] = useState<MatchCardType[] | []>([])
   const today = new Date().toISOString().split('T')[0];
 
-  const { match, loading, error } = useHomeMatchesFixtures(today)
+  const { match, loading, error, refetch } = useHomeMatchesFixtures(today)
 
   // const match: MatchCardType[] = useMemo<MatchCardType[]>(() =>
   //   [
@@ -138,7 +140,16 @@ export default function HomeScreen() {
   }, [match])
 
 
-
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch(); // You'll need to expose refetch from your hook
+    } catch (error) {
+      console.error('Refresh failed:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   if (subscribedLeagues.length < 0) {
     return (
@@ -148,9 +159,29 @@ export default function HomeScreen() {
     )
   }
 
-  if (loading) {
+  if (loading || refreshing) {
     return (
-      <HelloWave message='fetching matches for today...' />
+      <LoadingState message='fetching matches for today...' />
+    )
+  }
+  if (error) {
+    return (
+      <>
+        <ScrollView
+          contentContainerStyle={styles.errorContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#10b981']} // Android
+              tintColor="#10b981"  // iOS
+            />
+          }
+        >
+          <ErrorScreen error={error} />
+        </ScrollView>
+      </>
+
     )
   }
 
@@ -177,6 +208,14 @@ export default function HomeScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#10b981']} // Android
+              tintColor="#10b981"  // iOS
+            />
+          }
         >
           {activeList.length > 0 && activeTab === 'Live' && <LiveToast liveMatch={activeList.length} />}
 
@@ -269,5 +308,13 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 8,
     overflow: 'hidden',
+  },
+  errorContainer: {
+    flexGrow: 1, // Changed from flex: 1
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: 'rgb(254 226 226)',
+    minHeight: '100%', // Ensures full height for scrolling
   },
 })

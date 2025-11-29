@@ -25,6 +25,7 @@ export const useAppStore = create<AppState>()(
             hateTeamList: [],
             favList: [],
             hasHydrated: false,
+
             preference: {
                 enableReminders: true,
                 reminderTime: 30
@@ -35,7 +36,6 @@ export const useAppStore = create<AppState>()(
 
 
             updatePreference: (preference: PreferenceType) => {
-                // if (!get().hasHydrated) return;
                 set(state => {
                     const updated = { ...state.preference, ...preference }
                     syncNotificationPreference(updated).catch(console.error)
@@ -46,7 +46,6 @@ export const useAppStore = create<AppState>()(
 
             // update state
             setSubscribedLeagues: (league) => {
-                // if (!get().hasHydrated) return;
 
                 league.forEach((league) => {
                     set((state) => {
@@ -58,7 +57,7 @@ export const useAppStore = create<AppState>()(
                             : [...state.subscribedLeagues, league];
 
                         console.log('Updated subscribed leagues:', updated);
-                        susbscribeToLeages(updated)
+                        susbscribeToLeages(updated).catch(console.error)
                         return { subscribedLeagues: updated };
                     });
                 })
@@ -66,7 +65,6 @@ export const useAppStore = create<AppState>()(
             },
 
             setHateTeamList: (team: TeamType) => {
-                // if (!get().hasHydrated) return;
 
                 set(state => {
                     const exists = state.hateTeamList.some(item => item.id === team.id)
@@ -80,7 +78,6 @@ export const useAppStore = create<AppState>()(
 
 
             setFavList: (team: TeamType) => {
-                // if (!get().hasHydrated) return;
 
                 set(state => {
                     const exists = state.favList.some(item => item.id === team.id)
@@ -96,11 +93,6 @@ export const useAppStore = create<AppState>()(
         {
             name: 'app-storage',
             storage: createJSONStorage(() => AsyncStorage),
-            // onRehydrateStorage: () => (state) => {
-            //     if (state) {
-            //         state.hasHydrated = true;
-            //     }
-            // }
         }
     )
 );

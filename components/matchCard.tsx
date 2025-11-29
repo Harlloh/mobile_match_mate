@@ -1,14 +1,27 @@
 import { useAppStore } from "@/context/useAppStore";
 import { removeMatchAlerts, setMatchAlert } from "@/services/matchService";
 import { MatchCardType } from "@/types";
+import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 
 function MatchCard({ match }: { match: MatchCardType }) {
     const { preference, alertedMatches } = useAppStore()
+    const [loading, setLoading] = useState(false)
 
     const setAlarmForMatch = async (match: MatchCardType) => {
-        if (preference && preference.reminderTime !== undefined) await setMatchAlert(match, preference.reminderTime);
+        setLoading(true)
+
+        try {
+            isAlerted
+                ? await removeMatchAlerts(match.id as any)
+                : await setMatchAlert(match, preference.reminderTime as any)
+
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
+        }
     }
 
     const isAlerted = alertedMatches.includes(match.id || -1)
@@ -93,15 +106,14 @@ function MatchCard({ match }: { match: MatchCardType }) {
                 </Text>
                 {(!match.isLive && !match.timeCurrentlyAt) && (
                     <Button
+                        disabled={loading}
                         textColor={isAlerted ? "#e13302ff" : "#10b981"}
                         // onPress={() => setAlarmForMatch(match)}
                         onPress={() =>
-                            isAlerted
-                                ? removeMatchAlerts(match.id as any)
-                                : setMatchAlert(match, preference.reminderTime as any)
+                            setAlarmForMatch(match)
                         }
                     >
-                        {isAlerted ? 'Cancel Alert' : 'Set Alert'}
+                        {loading ? <ActivityIndicator /> : isAlerted ? 'Cancel Alert' : 'Set Alert'}
                     </Button>
                 )}
             </View>

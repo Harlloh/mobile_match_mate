@@ -1,19 +1,24 @@
-import Animated from 'react-native-reanimated';
+import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, Text } from "react-native-paper";
 
-export function HelloWave({ message }: { message?: string }) {
+export function LoadingState({ message }: { message?: string }) {
   return (
-    <Animated.Text
-      style={{
-        fontSize: 28,
-        lineHeight: 32,
-        marginTop: -6,
-        animationName: {
-          '50%': { transform: [{ rotate: '25deg' }] },
-        },
-        animationIterationCount: 4,
-        animationDuration: '300ms',
-      }}>
-      👋
-    </Animated.Text>
+    <View
+      style={style.container}
+    >
+      <ActivityIndicator size={"small"} />
+      <Text>{message ? message : 'Loading please wait..'}</Text>
+    </View>
   );
 }
+
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10
+  }
+})

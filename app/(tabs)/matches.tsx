@@ -1,15 +1,16 @@
+import { LoadingState } from '@/components/hello-wave';
 import MatchCard from '@/components/matchCard';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useState } from "react";
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Modal, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 function MatchesScreen() {
     const [date, setDate] = useState(new Date());
-    const { match, loading, error } = useHomeMatchesFixtures(
+    const { match, loading, error, refetch } = useHomeMatchesFixtures(
         date.toISOString().split("T")[0]
     );
     const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'finished'>('all');
@@ -28,6 +29,7 @@ function MatchesScreen() {
             year: 'numeric'
         })
     }
+    const [refreshing, setRefreshing] = useState(false)
 
 
 
@@ -86,7 +88,7 @@ function MatchesScreen() {
     if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Please wait while loading matches...</Text>
+                <LoadingState message='Please wait while loading matches...'></LoadingState>
             </View>
         )
     }
@@ -98,8 +100,30 @@ function MatchesScreen() {
         );
     }
 
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        try {
+            await refetch(); // You'll need to expose refetch from your hook
+        } catch (error) {
+            console.error('Refresh failed:', error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
     return (
-        <ScrollView>
+        <ScrollView
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={['#10b981']} // Android
+                    tintColor="#10b981"  // iOS
+                />
+            }
+        >
+
 
             <View style={styles.container}>
                 <View style={styles.buttonWrapper} >
