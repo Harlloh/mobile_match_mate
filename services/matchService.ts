@@ -295,3 +295,19 @@ export const removeMatchAlerts = async (match_id: number) => {
         return false;
     }
 };
+
+
+
+export async function saveExpoPushToken(userId: string, token: string) {
+    debugger
+    const { error } = await supabase
+        .from("user_devices")
+        .upsert({
+            user_id: userId,
+            expo_push_token: token,
+        });
+
+    if (error) {
+        console.error("Failed to save device token:", error);
+    }
+}

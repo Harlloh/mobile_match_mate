@@ -1,3 +1,4 @@
+import ErrorScreen from '@/components/errorScreen';
 import { LoadingState } from '@/components/hello-wave';
 import MatchCard from '@/components/matchCard';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
@@ -85,22 +86,6 @@ function MatchesScreen() {
 
 
 
-    if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <LoadingState message='Please wait while loading matches...'></LoadingState>
-            </View>
-        )
-    }
-    if (error) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Error loading matches: {error}</Text>
-            </View>
-        );
-    }
-
-
     const onRefresh = async () => {
         setRefreshing(true);
         try {
@@ -111,6 +96,37 @@ function MatchesScreen() {
             setRefreshing(false);
         }
     };
+
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <LoadingState message='Please wait while loading matches...'></LoadingState>
+            </View>
+        )
+    }
+    if (error) {
+        return (
+            <>
+                <ScrollView
+                    contentContainerStyle={styles.errorContainer}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={['#10b981']} // Android
+                            tintColor="#10b981"  // iOS
+                        />
+                    }
+                >
+                    <ErrorScreen error={error} />
+                </ScrollView>
+            </>
+
+        )
+    }
+
+
 
     return (
         <ScrollView
@@ -280,6 +296,14 @@ const styles = StyleSheet.create({
     doneButton: {
         alignSelf: 'center',
         marginTop: 10,
+    },
+    errorContainer: {
+        flexGrow: 1, // Changed from flex: 1
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: 'rgb(254 226 226)',
+        minHeight: '100%', // Ensures full height for scrolling
     },
 });
 

@@ -1,12 +1,11 @@
 {
   "expo": {
     "name": "mobile_match_mate",
-    "slug": "mobile_match_mate",
+    "slug": "match-mate",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "exp",
-    // "scheme": "mobilematchmate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -28,6 +27,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-notifications",
       [
         "expo-splash-screen",
         {
@@ -44,6 +44,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9b0633a9-33e9-4d28-bae5-343ee6f819d7"
+      }
+    },
+    "owner": "harlloh"
   }
 }

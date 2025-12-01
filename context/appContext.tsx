@@ -1,9 +1,13 @@
 import { supabase } from "@/lib/supabase";
-import { getAlertedMatches, getNotificationPreference, getSubscribedLeagues, getTeamsList } from "@/services/matchService";
+import { getAlertedMatches, getNotificationPreference, getSubscribedLeagues, getTeamsList, saveExpoPushToken } from "@/services/matchService";
 import { AuthContextType } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Session, User } from "@supabase/supabase-js";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
+import * as Notifications from 'expo-notifications';
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+
 
 export const userContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -46,6 +50,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 alert(error.message || 'An error occurred while signing you in...')
                 return { error, success: false }
             }
+
+            // user successfully signed in
+            const user = data.user;
+
+            // register push token
+            const token = await registerForPush();
+            if (token) {
+                await saveExpoPushToken(user.id, token);
+            }
             // await getSubscribedLeagues()
             await Promise.all([
                 getSubscribedLeagues(),
@@ -80,6 +93,42 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         }
     };
+
+
+
+    async function registerForPush() {
+        if (Device.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+
+            if (existingStatus !== "granted") {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+
+            if (finalStatus !== "granted") {
+                console.log("Permission denied.");
+                return null;
+            }
+
+            const projectId =
+                Constants?.expoConfig?.extra?.eas?.projectId ??
+                Constants?.easConfig?.projectId;
+
+            if (!projectId) {
+                console.error("Missing project ID");
+                return null;
+            }
+
+            const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+            return token;
+        }
+
+        console.log("Must use a real device");
+        return null;
+    }
+
+
 
 
 
