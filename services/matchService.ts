@@ -296,15 +296,37 @@ export const removeMatchAlerts = async (match_id: number) => {
 
 
 
-export async function saveExpoPushToken(userId: string, token: string) {
-    const { error } = await supabase
-        .from("user_devices")
-        .upsert({
-            user_id: userId,
-            expo_push_token: token,
-        });
+// export async function saveExpoPushToken(userId: string, token: string) {
+//     const { error } = await supabase
+//         .from("user_devices")
+//         .upsert({
+//             user_id: userId,
+//             expo_push_token: token,
+//         },
+//             { onConflict: "expo_push_token" }
+//         );
 
-    if (error) {
-        console.error("Failed to save device token:", error);
+//     if (error) {
+//         console.error("Failed to save device token:", error);
+//     }
+// }
+export async function saveExpoPushToken(userId: string, token: string) {
+    const existing = await supabase
+        .from("user_devices")
+        .select("*")
+        .eq("expo_push_token", token)
+        .maybeSingle();
+
+    if (existing?.data) {
+        console.log("Token already saved — skipping");
+        return;
     }
+
+    // Insert new token
+    const { error } = await supabase.from("user_devices").insert({
+        user_id: userId,
+        expo_push_token: token,
+    });
+
+    if (error) console.error(error);
 }

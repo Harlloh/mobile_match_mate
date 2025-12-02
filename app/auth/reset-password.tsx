@@ -30,10 +30,10 @@ export default function ResetPassword() {
 
     const handleUpdatePassword = async () => {
         // Check if session is ready
-        if (!deepLinkValues.access_token || !deepLinkValues.refresh_token) {
-            setMessage("❌ Session not ready. Please wait or request a new reset link.");
-            return;
-        }
+        // if (!deepLinkValues.access_token || !deepLinkValues.refresh_token) {
+        //     setMessage("❌ Session not ready. Please wait or request a new reset link.");
+        //     return;
+        // }
 
         if (!newPassword || !confirmPassword) {
             setMessage("❌ Please fill in all fields");
@@ -76,29 +76,29 @@ export default function ResetPassword() {
                 // Check for initial URL (when app opens from closed state)
                 const initialUrl = await Linking.getInitialURL();
                 if (initialUrl) {
-                    // console.log('Initial URL:', initialUrl);
+                    console.log('Initial URL:', initialUrl);
                     const parsed = parseParams(initialUrl);
                     if (parsed && parsed.access_token && !hasProcessedRef.current) {
-                        hasProcessedRef.current = true;
                         setDeepLinkValues(parsed);
+                        hasProcessedRef.current = true;
                         await setSessionWithTokens(parsed);
                     }
                 }
 
                 // Listen for deep links while the app is running
                 const subscription = Linking.addEventListener('url', async ({ url }) => {
-                    // console.log('Deep link received:', url);
+                    console.log('Deep link received:', url);
 
                     // Prevent duplicate processing
                     if (hasProcessedRef.current) {
-                        // console.log('Already processed, skipping...');
+                        console.log('Already processed, skipping...');
                         return;
                     }
 
                     const parsed = parseParams(url);
                     if (parsed && parsed.access_token) {
-                        hasProcessedRef.current = true;
                         setDeepLinkValues(parsed);
+                        hasProcessedRef.current = true;
                         await setSessionWithTokens(parsed);
                     }
                 });
@@ -130,12 +130,14 @@ export default function ResetPassword() {
     };
     // Function to set the session with tokens
     const setSessionWithTokens = async (tokens: typeof deepLinkValues) => {
+        console.log('Tokens received', tokens);
         if (!tokens.access_token || !tokens.refresh_token) {
             setMessage("❌ Invalid reset link");
             return;
         }
 
         console.log('Setting session with tokens...');
+
 
         const { error } = await supabase.auth.setSession({
             access_token: tokens.access_token,
@@ -147,10 +149,19 @@ export default function ResetPassword() {
             setMessage(`❌ Failed to restore session: ${error.message}`);
             hasProcessedRef.current = false; // Allow retry
         } else {
-            console.log('✅ Session set successfully');
+            setDeepLinkValues(tokens);
+            console.log('✅ Session set successfully', isLoading, deepLinkValues);
             setMessage("✅ Ready to set new password");
         }
     };
+
+    useEffect(() => {
+        console.log("💡 deepLinkValues updated:", deepLinkValues);
+
+        if (deepLinkValues.access_token) {
+            console.log("🔓 Now the UI can safely update");
+        }
+    }, [deepLinkValues]);
 
 
     useFocusEffect(
@@ -234,7 +245,7 @@ export default function ResetPassword() {
                             buttonColor="#10b981"
                             onPress={handleUpdatePassword}
                             loading={isLoading}
-                            disabled={isLoading || !deepLinkValues.access_token}
+                            disabled={isLoading}
                             style={{ borderRadius: 30 }}
                         >
                             Update Password

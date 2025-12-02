@@ -107,7 +107,7 @@ function SignIn() {
                                 onPress={() => router.replace('/(tabs)/leagues')}
                                 style={styles.signUpText}
                             >
-                                Sign Upjkfds
+                                Sign Up
                             </Text>
                         </View>
                     </View>
