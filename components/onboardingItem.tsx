@@ -81,11 +81,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         alignItems: "center",
         justifyContent: "center",
-        elevation: 5, // Android shadow
-        // shadowColor: "#000", // iOS shadow
-        // shadowOffset: { width: 0, height: 3 },
-        // shadowOpacity: 0.15,
-        // shadowRadius: 6,
     },
 
     // 💡 Icon centered in a soft circle

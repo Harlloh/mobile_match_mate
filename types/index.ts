@@ -8,9 +8,11 @@ export interface AuthContextType {
     signOut: () => Promise<void>;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     isLoading: boolean;
+    routeGuardReady: boolean;
     session: Session | null;
     hasOnboarded: boolean | null;
     setHasOnboarded: React.Dispatch<React.SetStateAction<boolean | null>>;
+    setRouteGuardReady: React.Dispatch<React.SetStateAction<boolean>>;
 
 }
 
@@ -47,7 +49,11 @@ export interface MatchCardType {
 export type TeamType = {
     name: string;
     icon: string;
-    id: string | number
+    id: string | number;
+    leagueName?: string;
+    leagueId?: number;
+    shortName?: string | null;
+    leagueCode?: string
 }
 export type PreferenceType = {
     enableReminders?: boolean,

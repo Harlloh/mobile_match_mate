@@ -80,7 +80,7 @@ export default function TabLayout() {
         }
       }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="notifications"
         options={{
           href: null,
@@ -89,7 +89,7 @@ export default function TabLayout() {
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="bell" color={color} />,
         }}
-      />
+      /> */}
 
 
 

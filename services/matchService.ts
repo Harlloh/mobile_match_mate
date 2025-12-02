@@ -112,7 +112,6 @@ export const syncTeamsList = async (teams: TeamType[], type: 'favourite' | 'hate
 }
 
 export const getTeamsList = async (type: 'favourite' | 'hate') => {
-    console.log(`Getting ${type} teams list`);
     try {
         const { data, error } = await supabase
             .from(type === 'favourite' ? 'favorite_teams' : 'hate_teams')
@@ -134,7 +133,6 @@ export const getTeamsList = async (type: 'favourite' | 'hate') => {
         }
 
         const teams = data.teams || [];
-        console.log(`Fetched ${type} teams:`, teams);
 
         // Update Zustand store
         if (type === 'favourite') {
@@ -299,7 +297,6 @@ export const removeMatchAlerts = async (match_id: number) => {
 
 
 export async function saveExpoPushToken(userId: string, token: string) {
-    debugger
     const { error } = await supabase
         .from("user_devices")
         .upsert({

@@ -3,7 +3,7 @@ import { OnboardingItemsType } from '@/types';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { Stack, useRouter } from "expo-router";
 import { useRef } from 'react';
-import { Animated, FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { Animated, FlatList, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
 export default function OnboardingScreen() {
     const router = useRouter();
@@ -106,7 +106,7 @@ export default function OnboardingScreen() {
 
 
                 </View>
-                <Text style={{
+                {/* <Text style={{
                     marginTop: 5, color: '#5a5d63ff'
                 }}>Already have an account?
                     <Pressable onPress={() => router.replace("/auth/signin")}>
@@ -122,7 +122,7 @@ export default function OnboardingScreen() {
                             </Text>
                         )}
                     </Pressable>
-                </Text>
+                </Text> */}
             </View>
         </>
     );
@@ -131,12 +131,13 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "space-between",  // distributes header, carousel, footer
+        justifyContent: "flex-start",  // distributes header, carousel, footer
         alignItems: "center",
         paddingVertical: 40,               // top & bottom breathing room
         // paddingHorizontal: 24,
         paddingBottom: 50,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        gap: 160
     },
     title: { fontSize: 24, fontWeight: "bold", marginBottom: 12 },
     text: { textAlign: "center", marginBottom: 24 },

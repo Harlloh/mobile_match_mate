@@ -8,7 +8,7 @@ import { Text, TextInput } from "react-native-paper";
 import teams from '../../data/teams.json';
 
 function FavouritesScreen() {
-    const { setFavList, setHateTeamList, favList, hateTeamList } = useAppStore()
+    const { setFavList, setHateTeamList, favList, hateTeamList, subscribedLeagues } = useAppStore()
     // const {setFavList, setHateList,favList, hateList} = useAppStore()
     const tabs = ["Favourites", "Hate Watch"];
     const [list, setList] = useState<(TeamType)[]>([]);
@@ -17,10 +17,24 @@ function FavouritesScreen() {
     const [searchText, setSearchText] = useState<string>('')
 
 
+    // const sourceList = useMemo(() => {
+    //     // const sortedTeams = subscribedLeagues.flatMap((leagueItem) =>
+    //     //     teams.filter((team) => team.leagueCode == leagueItem.id)
+    //     // );
+    //     if (activeList === "Favourites") return teams;
+    //     return teams;
+    // }, [activeList]);
     const sourceList = useMemo(() => {
-        if (activeList === "Favourites") return teams;
-        return teams;
-    }, [activeList]);
+        if (!subscribedLeagues?.length) return [];
+
+        return teams.filter(team =>
+            subscribedLeagues.some(league =>
+                league.id === team.leagueCode || league.id === team.leagueCode
+            )
+        );
+    }, [subscribedLeagues]);
+
+
     const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
 
@@ -82,9 +96,20 @@ function FavouritesScreen() {
 
 
     // useEffect(() => {
-    //     console.log(favList, '*******', hateTeamList);
-    //     AsyncStorage.removeItem('app-storage')
-    // }, [])
+    //     const slimTeams = masterTeams.flatMap((comp: any) =>
+    //         comp.teams.map((team: any) => ({
+    //             id: team.id,
+    //             name: team.name,
+    //             shortName: team.shortName,
+    //             leagueName: comp.competition.name,
+    //             leagueId: comp.competition.id,
+    //             leagueCode: comp.competition.code,
+    //             icon: team.crest,
+    //         }))
+    //     );
+
+    //     console.log(slimTeams, '*##**');
+    // }, [masterTeams]);
 
 
     return (
@@ -124,7 +149,7 @@ function FavouritesScreen() {
             {/* List */}
             {list.length > 0 ? (<FlatList
                 data={list}
-                keyExtractor={(item) => String(item.id)}
+                keyExtractor={(item) => `${item.leagueCode}-${item.id})`}
                 renderItem={({ item }) => (
                     <TeamCard
                         type={type}
@@ -151,7 +176,7 @@ function FavouritesScreen() {
             />
             ) : (
                 <Text style={{ textAlign: 'center', marginTop: 40, color: '#64748b' }}>
-                    No results found.
+                    {subscribedLeagues.length < 1 ? 'Please subscribe to leagues to see teams list' : 'No results found.'}
                 </Text>
             )}
         </View>

@@ -1,6 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -13,7 +12,7 @@ function CustomHeader({ title }: { title: string }) {
             <Text variant="titleLarge" style={styles.title}>{title}</Text>
 
             {/* Notification Bell */}
-            <Pressable
+            {/* <Pressable
                 onPress={() => router.push('/(tabs)/notifications')}
                 style={({ pressed }) => [
                     styles.bellButton,
@@ -21,11 +20,10 @@ function CustomHeader({ title }: { title: string }) {
                 ]}
             >
                 <Ionicons name="notifications-outline" size={24} color="#111827" />
-                {/* Notification badge */}
                 <View style={styles.badge}>
                     <Text style={styles.badgeText}> </Text>
                 </View>
-            </Pressable>
+            </Pressable> */}
         </View>
     );
 }

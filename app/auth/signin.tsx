@@ -17,7 +17,7 @@ function SignIn() {
     const handleSubmit = async () => {
         try {
             setIsLoading(true)
-            console.log(formData)
+            // console.log(formData)
             const res = await signIn(formData.email, formData.password)
             if (!res.success) return
             router.replace('/')
@@ -104,10 +104,10 @@ function SignIn() {
                         <View style={styles.signUpContainer}>
                             <Text style={styles.signUpPrompt}>Don't have an account? </Text>
                             <Text
-                                onPress={() => router.replace('/auth/signup')}
+                                onPress={() => router.replace('/(tabs)/leagues')}
                                 style={styles.signUpText}
                             >
-                                Sign Up
+                                Sign Upjkfds
                             </Text>
                         </View>
                     </View>

@@ -13,6 +13,7 @@ export const userContext = createContext<AuthContextType | undefined>(undefined)
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [routeGuardReady, setRouteGuardReady] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null)
     const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null)
@@ -56,6 +57,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
             // register push token
             const token = await registerForPush();
+            // console.log(token);
             if (token) {
                 await saveExpoPushToken(user.id, token);
             }
@@ -81,7 +83,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUser(null)
         setSession(null)
         AsyncStorage.removeItem('app-storage')
-        AsyncStorage.clear()
     }
     const loadOnboarding = async () => {
         try {
@@ -165,7 +166,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [])
 
     return (
-        <userContext.Provider value={{ user, setUser, signUp, signIn, signOut, isLoading, session, hasOnboarded, setHasOnboarded }}>
+        <userContext.Provider value={{ user, setUser, signUp, signIn, signOut, isLoading, session, hasOnboarded, setHasOnboarded, setRouteGuardReady, routeGuardReady }}>
             {children}
         </userContext.Provider>
     )
