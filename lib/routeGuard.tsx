@@ -41,6 +41,7 @@ function RouteGaurd({ children }: { children: ReactNode }) {
             return;
         }
 
+
         // DEFAULT: ROUTE IS VALID
         setRouteGuardReady(true);
 
