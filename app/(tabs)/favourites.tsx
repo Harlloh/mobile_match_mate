@@ -24,30 +24,30 @@ function FavouritesScreen() {
     //     if (activeList === "Favourites") return teams;
     //     return teams;
     // }, [activeList]);
+    const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
+
     const sourceList = useMemo(() => {
         if (!subscribedLeagues?.length) return [];
 
         return teams.filter(team =>
             subscribedLeagues.some(league =>
-                league.id === team.leagueCode || league.id === team.leagueCode
+                league.id === team.leagueCode
             )
         );
     }, [subscribedLeagues]);
 
 
-    const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
 
     useEffect(() => {
         setSearchText('')
+        setList(sourceList);
         if (activeList === "Favourites") {
-            setList(teams);
             setType("favourite");
         } else if (activeList === "Hate Watch") {
-            setList(teams);
             setType("hate");
         }
-    }, [activeList]);
+    }, [activeList, sourceList]);
 
 
     const handleToggle = (item: TeamType, toggleType: "favourite" | "hate") => {

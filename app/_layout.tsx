@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 import { useAuth, UserProvider } from '@/context/appContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import RouteGaurd from '@/lib/routeGuard';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export const unstable_settings = {
@@ -42,6 +42,11 @@ function AppContent() {
   if (isLoading || hasOnboarded === null) {
     return (
       <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+        <Image
+          source={require('../assets/images/match_mate_logo.jpg')}
+          style={{ width: 120, height: 120, borderRadius: 12, }}
+          resizeMode="contain"
+        />
         <Text>Loading from app base...</Text>
       </View>
     );

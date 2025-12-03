@@ -1,8 +1,7 @@
 import { useAuth } from "@/context/appContext";
 import { usePathname, useRouter, useSegments } from "expo-router";
 import { ReactNode, useEffect } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { Image, View } from "react-native";
 
 function RouteGaurd({ children }: { children: ReactNode }) {
     const route = useRouter();
@@ -51,7 +50,12 @@ function RouteGaurd({ children }: { children: ReactNode }) {
     if (!routeGuardReady) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <Text>Checking routes...</Text>
+                <Image
+                    source={require('../assets/images/match_mate_logo.jpg')}
+                    style={{ width: 120, height: 120, borderRadius: 12, }}
+                    resizeMode="contain"
+                />
+                {/* <Text>Checking routes...</Text> */}
             </View>
         );
     }
