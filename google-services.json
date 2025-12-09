@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "705042438538",
+    "project_id": "linkedin-clone-563f4",
+    "storage_bucket": "linkedin-clone-563f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705042438538:android:61248d5122b327a85a5073",
+        "android_client_info": {
+          "package_name": "com.matchmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5AOwVTDIbBHEdxJ2ees9PElkKyDLR9Zo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

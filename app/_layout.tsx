@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 import { useAuth, UserProvider } from '@/context/appContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import RouteGaurd from '@/lib/routeGuard';
-import { Image, View } from 'react-native';
+import { Image, LogBox, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export const unstable_settings = {
@@ -26,6 +26,12 @@ const theme = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  // Disable all error/warning overlays
+  if (!__DEV__) {
+    LogBox.ignoreAllLogs(true);
+    console.error = () => { };
+    console.warn = () => { };
+  }
 
   return (
     <UserProvider>

@@ -34,6 +34,7 @@ yarn-error.*
 .env*.local
 
 # typescript
+
 *.tsbuildinfo
 
 app-example
@@ -44,3 +45,4 @@ app-example
 
 
 .env.local
+linkedin-clone-563f4-firebase-adminsdk-tgh14-72299da740.json
