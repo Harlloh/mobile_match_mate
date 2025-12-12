@@ -37,7 +37,7 @@ export default function OnboardingScreen() {
             <Stack.Screen options={{ headerShown: false }} />
             <View style={styles.container}>
                 <View style={{ paddingTop: 30 }}>
-                    <Text style={styles.title}>Welcome to Match Mate ⚽</Text>
+                    <Text style={styles.title}>Welcome to Match Beacon ⚽</Text>
                     <Text style={styles.text}>
                         Your Football, your way
                     </Text>

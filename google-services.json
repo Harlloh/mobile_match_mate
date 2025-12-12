@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "705042438538",
-    "project_id": "linkedin-clone-563f4",
-    "storage_bucket": "linkedin-clone-563f4.firebasestorage.app"
+    "project_number": "616783814946",
+    "project_id": "match-beacon",
+    "storage_bucket": "match-beacon.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:705042438538:android:61248d5122b327a85a5073",
+        "mobilesdk_app_id": "1:616783814946:android:77b526341d80637756057b",
         "android_client_info": {
-          "package_name": "com.matchmate"
+          "package_name": "com.harlloh.matchmate"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB5AOwVTDIbBHEdxJ2ees9PElkKyDLR9Zo"
+          "current_key": "AIzaSyCm4uWAntpVaEI3M-qpu71mucBGV-rj5ew"
         }
       ],
       "services": {

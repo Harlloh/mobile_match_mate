@@ -47,7 +47,7 @@ function SignUp() {
                             Create Your Account ⚽
                         </Text>
                         <Text style={styles.subtitle} variant="bodyMedium">
-                            Join Match Mate and start tracking your favorite teams.
+                            Join Match Beacon and start tracking your favorite teams.
                         </Text>
                     </View>
 
