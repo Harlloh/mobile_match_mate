@@ -36,6 +36,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 return { error, success: false }
             }
             setUser(data.user)
+            // register push token
+            const token = await registerForPush();
+            // console.log(token);
+            if (token && user) {
+                await saveExpoPushToken(user.id, token);
+            }
             return { success: true, data }
         } catch (error) {
             console.error('An error occurred while signing up', error)
