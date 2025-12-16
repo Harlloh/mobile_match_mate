@@ -11,6 +11,15 @@ import { Platform } from "react-native";
 
 
 export const userContext = createContext<AuthContextType | undefined>(undefined)
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+    }),
+});
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -39,8 +48,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             // register push token
             const token = await registerForPush();
             // console.log(token);
-            if (token && user) {
-                await saveExpoPushToken(user.id, token);
+            if (token && data.user) {
+                await saveExpoPushToken(data.user.id, token);
             }
             return { success: true, data }
         } catch (error) {
