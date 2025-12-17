@@ -16,7 +16,7 @@ export default function OnboardingScreen() {
         {
             header: 'Match Updates',
             icon: <EvilIcons name="calendar" size={44} color="#10b981" />,
-            desc: 'Get real-time updates for your favorite teams and competitions.',
+            desc: 'Get real-time updates from competitions in the leagues you subscribe to.',
         },
         {
             header: 'Custom Alerts',
@@ -28,6 +28,12 @@ export default function OnboardingScreen() {
             icon: <EvilIcons name="heart" size={44} color="#10b981" />,
             desc: 'Follow teams you love (or love to hate) for a tailored football experience.',
         },
+        {
+            header: 'Never Miss a Match',
+            icon: <EvilIcons name="exclamation" size={44} color="#10b981" />,
+            desc: 'Enable notifications to get timely reminders before kickoff.'
+        }
+
     ]
 
 

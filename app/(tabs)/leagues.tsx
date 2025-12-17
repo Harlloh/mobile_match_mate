@@ -1,15 +1,14 @@
-import { useAuth } from "@/context/appContext";
 import { useAppStore } from "@/context/useAppStore";
 import { formatedtLeaguexy, popularLeaguesList } from "@/lib/utils";
 import { LeagueType } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { Alert, FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
 function LeaguesScreen() {
     const popularLeagues = popularLeaguesList
     const { subscribedLeagues, setSubscribedLeagues } = useAppStore();
-    const { user } = useAuth()
+    const maxLeagues = 3
 
     const leagues = useMemo(() => formatedtLeaguexy(), []);
     const [formattedLeagues, setFormattedLeagues] = useState<LeagueType[] | []>([])
@@ -75,19 +74,60 @@ function LeaguesScreen() {
         }, 200)
     }
 
+    // const handleLeagues = (league: LeagueType) => {
+
+
+    //     setSelectedLeagues((prev: LeagueType[]) => {
+    //         const exists = prev.some((item) => item.id === league.id)
+    //         if (exists) {
+    //             return prev.filter((item) => item.id !== league.id)
+    //         } else {
+    //             return [...prev, league]
+    //         }
+    //     })
+    //     susbscribeChangeRef.current = true
+    //     console.log(getNextSubscribedLeagues(), '*****');
+    // }
     const handleLeagues = (league: LeagueType) => {
+        setSelectedLeagues(prev => {
+            const existsInSelected = prev.some(l => l.id === league.id);
 
+            // Toggle selection first, this is for toggling(adding and removing) the selected leagues at first
+            const nextSelected = existsInSelected
+                ? prev.filter(l => l.id !== league.id)
+                : [...prev, league];
 
-        setSelectedLeagues((prev: LeagueType[]) => {
-            const exists = prev.some((item) => item.id === league.id)
-            if (exists) {
-                return prev.filter((item) => item.id !== league.id)
-            } else {
-                return [...prev, league]
+            // Simulate final subscribed result
+            const nextSubscribed = (() => {
+                let result = [...subscribedLeagues];
+
+                for (const l of nextSelected) {
+                    //we check if the id of the subscricribedList(result) matches any of the selected in the nextSelected, if it does, we unsubscribe
+                    const exists = result.some(r => r.id === l.id);
+                    //while this is for removing/adding subscribed leagues,
+                    result = exists
+                        ? result.filter(r => r.id !== l.id)
+                        : [...result, l];
+                }
+                //return final result which is the nextSubscribed
+                return result;
+            })();
+
+            // 🚨 Enforce limit
+            if (nextSubscribed.length > maxLeagues) {
+                Alert.alert(`Limit reached, You can only subscribe to ${maxLeagues} leagues`);
+                return prev; // block selection
             }
-        })
-        susbscribeChangeRef.current = true
-    }
+
+            susbscribeChangeRef.current = true;
+            return nextSelected;
+        });
+    };
+
+
+
+
+
 
 
 
