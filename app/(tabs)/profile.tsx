@@ -100,7 +100,7 @@ function ProfileScreen() {
 
             {/* ⚽ Footer */}
             <Text style={styles.footerText}>
-                MatchMate v1.0.0 — Your Football, Your Way ⚽
+                FC Pulse v1.0.0 — Your Football, Your Way ⚽
             </Text>
         </ScrollView>
     );

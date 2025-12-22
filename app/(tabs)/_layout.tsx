@@ -30,7 +30,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          header: () => <CustomHeader title='Matchmate' />,
+          header: () => <CustomHeader title='FC Pulse' />,
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
