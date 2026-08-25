@@ -1,11 +1,12 @@
 import ErrorScreen from '@/components/errorScreen';
+import EmptyState from '@/components/emptyState';
 import { LoadingState } from '@/components/hello-wave';
 import MatchCard from '@/components/matchCard';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
 import { FontAwesome5 } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Modal, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -16,7 +17,6 @@ function MatchesScreen() {
     );
     const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'finished'>('all');
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [filteredMatch, setFilteredMatch] = useState<MatchCardType[] | []>([])
     const filter = [
         { label: 'All', key: 'all' },
         { label: 'Live', key: 'live' },
@@ -55,7 +55,7 @@ function MatchesScreen() {
         setShowDatePicker(true);
     };
 
-    const getFilteredMatches = () => {
+    const filteredMatch = useMemo(() => {
         if (!Array.isArray(match) || match.length === 0) return [];
 
         switch (activeFilter) {
@@ -71,18 +71,7 @@ function MatchesScreen() {
             default:
                 return match; // ALL
         }
-
-
-    }
-
-    useEffect(() => {
-        // console.log('Current filters', { activeFilter, date })
-        if (loading) return
-
-        const filtered = getFilteredMatches();
-        setFilteredMatch(filtered);
-
-    }, [activeFilter, date, loading, match])
+    }, [activeFilter, match]);
 
 
 
@@ -130,6 +119,7 @@ function MatchesScreen() {
 
     return (
         <ScrollView
+            contentContainerStyle={styles.scrollContent}
             refreshControl={
                 <RefreshControl
                     refreshing={refreshing}
@@ -210,9 +200,14 @@ function MatchesScreen() {
                             </View>
                         )
                     }) :
-                    <View style={{ alignItems: 'center', marginTop: 50 }}>
-                        <Text>No {activeFilter} matches</Text>
-                    </View>
+                    <EmptyState
+                        icon={activeFilter === 'live' ? 'access-point' : 'calendar-search'}
+                        title={activeFilter === 'all' ? 'No fixtures on this date' : `No ${activeFilter} matches`}
+                        description={activeFilter === 'all' ? `Nothing is scheduled for ${formatDate(date)} in your subscribed leagues. Try another date.` : `There are no ${activeFilter} matches in the fixtures for ${formatDate(date)}.`}
+                        actionLabel={activeFilter === 'all' ? 'Choose another date' : 'Show all matches'}
+                        onAction={activeFilter === 'all' ? handleCalendarPress : () => setActiveFilter('all')}
+                        style={styles.emptyState}
+                    />
                 }
 
             </View>
@@ -223,11 +218,19 @@ function MatchesScreen() {
 export default MatchesScreen;
 
 const styles = StyleSheet.create({
+    scrollContent: {
+        flexGrow: 1,
+        backgroundColor: '#f9fafb',
+    },
     container: {
         flex: 1,
         backgroundColor: '#f9fafb',
         padding: 10,
         paddingHorizontal: 20
+    },
+    emptyState: {
+        flex: 1,
+        minHeight: 360,
     },
     buttonWrapper: {
         display: 'flex',
@@ -306,4 +309,3 @@ const styles = StyleSheet.create({
         minHeight: '100%', // Ensures full height for scrolling
     },
 });
-

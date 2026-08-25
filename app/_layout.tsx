@@ -10,6 +10,7 @@ import { useAuth, UserProvider } from '@/context/appContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import RouteGaurd from '@/lib/routeGuard';
 import { leagueCacheTime, leagueQueryKey } from '@/services/useLeagues';
+import { teamCatalogueCacheTime, teamCatalogueQueryRoot } from '@/services/useTeams';
 import { Image, LogBox, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -18,6 +19,10 @@ const queryClient = new QueryClient();
 // Apply the longer garbage-collection time only to league data.
 queryClient.setQueryDefaults(leagueQueryKey, {
   gcTime: leagueCacheTime,
+});
+
+queryClient.setQueryDefaults(teamCatalogueQueryRoot, {
+  gcTime: teamCatalogueCacheTime,
 });
 
 const asyncStoragePersister = createAsyncStoragePersister({
@@ -59,7 +64,8 @@ export default function RootLayout() {
         buster: 'v1',
         dehydrateOptions: {
           shouldDehydrateQuery: (query) =>
-            query.queryKey[0] === leagueQueryKey[0] &&
+            (query.queryKey[0] === leagueQueryKey[0] ||
+              query.queryKey[0] === teamCatalogueQueryRoot[0]) &&
             query.state.status === 'success',
         },
       }}

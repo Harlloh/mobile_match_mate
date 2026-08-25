@@ -1,11 +1,12 @@
 import TeamCard from "@/components/teamCard";
 import { useAppStore } from "@/context/useAppStore";
-// import { teams } from "@/lib/utils";
+import { useTeams } from "@/services/useTeams";
 import { TeamType } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, Keyboard, Platform, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, Keyboard, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
-import teams from '../../data/teams.json';
+
+const EMPTY_TEAMS: TeamType[] = [];
 
 function FavouritesScreen() {
     const { setFavList, setHateTeamList, favList, hateTeamList, subscribedLeagues } = useAppStore()
@@ -18,16 +19,18 @@ function FavouritesScreen() {
 
     const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
-    const sourceList = useMemo(() => {
-        if (!subscribedLeagues?.length) return [];
-
-        return teams.filter(team =>
-            subscribedLeagues.some(league =>
-                league.id === team.leagueCode
-            )
-        );
+    const subscribedLeagueCodes = useMemo(() => {
+        return subscribedLeagues.map((league) => league.id);
     }, [subscribedLeagues]);
 
+    const {
+        data: sourceList = EMPTY_TEAMS,
+        isLoading,
+        isError,
+        error,
+        refetch,
+        isRefetching,
+    } = useTeams(subscribedLeagueCodes);
 
 
 
@@ -138,10 +141,26 @@ function FavouritesScreen() {
                 ))}
             </View>
 
-            {/* List */}
-            {list.length > 0 ? (<FlatList
+            {/* Team catalogue for the user's subscribed leagues */}
+            {isLoading && (
+                <View style={styles.statusContainer}>
+                    <ActivityIndicator size="large" color="#10b981" />
+                    <Text>Fetching teams...</Text>
+                </View>
+            )}
+
+            {isError && (
+                <View style={styles.statusContainer}>
+                    <Text style={styles.errorText}>{error.message}</Text>
+                    <Pressable onPress={() => refetch()} style={styles.retryButton}>
+                        <Text style={styles.retryText}>{isRefetching ? "Retrying..." : "Retry"}</Text>
+                    </Pressable>
+                </View>
+            )}
+
+            {!isLoading && !isError && (list.length > 0 ? (<FlatList
                 data={list}
-                keyExtractor={(item) => `${item.leagueCode}-${item.id})`}
+                keyExtractor={(item) => String(item.id)}
                 renderItem={({ item }) => (
                     <TeamCard
                         type={type}
@@ -170,7 +189,7 @@ function FavouritesScreen() {
                 <Text style={{ textAlign: 'center', marginTop: 40, color: '#64748b' }}>
                     {subscribedLeagues.length < 1 ? 'Please subscribe to leagues to see teams list' : 'No results found.'}
                 </Text>
-            )}
+            ))}
         </View>
     );
 }
@@ -185,6 +204,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#f9fafb",
+    },
+    statusContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 40,
+        gap: 10,
+    },
+    errorText: {
+        color: "#dc2626",
+        textAlign: "center",
+    },
+    retryButton: {
+        backgroundColor: "#10b981",
+        borderRadius: 10,
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+    },
+    retryText: {
+        color: "#fff",
+        fontWeight: "600",
     },
     buttonWrapper: {
         flexDirection: "row",
