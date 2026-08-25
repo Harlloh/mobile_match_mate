@@ -5,6 +5,7 @@ import CustomHeader from '@/components/customHeader';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { appName } from '@/lib/utils';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 
@@ -30,7 +31,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          header: () => <CustomHeader title='FC Pulse' />,
+          header: () => <CustomHeader title={appName} />,
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}

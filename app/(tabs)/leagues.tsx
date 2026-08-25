@@ -1,49 +1,28 @@
 import { useAppStore } from "@/context/useAppStore";
-import { formatedtLeaguexy, popularLeaguesList } from "@/lib/utils";
+import { maxLeagues } from "@/lib/utils";
+import { useLeagues } from "@/services/useLeagues";
 import { LeagueType } from "@/types";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Alert, FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 
-function LeaguesScreen() {
-    const popularLeagues = popularLeaguesList
-    const { subscribedLeagues, setSubscribedLeagues } = useAppStore();
-    const maxLeagues = 3
+const EMPTY_LEAGUES: LeagueType[] = [];
 
-    const leagues = useMemo(() => formatedtLeaguexy(), []);
-    const [formattedLeagues, setFormattedLeagues] = useState<LeagueType[] | []>([])
+function LeaguesScreen() {
+    const { subscribedLeagues, setSubscribedLeagues } = useAppStore();
+    const { data: leagues = EMPTY_LEAGUES, isPending, isError, error, refetch, isRefetching } = useLeagues();
+    const [formattedLeagues, setFormattedLeagues] = useState<LeagueType[] | []>([]) //this is like the master league list
     const [filteredLeagues, setFilteredLeagues] = useState<LeagueType[] | []>([])
     const [selectedLeagues, setSelectedLeagues] = useState<LeagueType[] | []>([])
-    const [visibleCount, setVisibleCount] = useState<number>(5)
     const [showSubscribedOnly, setShowSubscribedOnly] = useState(false);
-
-
-
-    const handleLoadMore = () => {
-        visibleCount < filteredLeagues.length && setVisibleCount((prev) => prev + 5)
-    }
 
     const searchTextTimeoutRef = useRef<NodeJS.Timeout | number | null>(null)
     const susbscribeChangeRef = useRef<boolean>(false)
 
-
-
-    // SET, FORMAT AND SET THE DEFAULT LEAGUES
+    // Supabase already returns visible leagues in display order as set by the server.
     useEffect(() => {
-        if (leagues && leagues.length > 0) {
-
-
-            const popular = leagues.filter((a: LeagueType) => {
-                return popularLeagues.includes(a.id)
-            })
-            const others = leagues.filter((a: LeagueType) => {
-                return !popularLeagues.includes(a.id)
-            })
-            const sorted = [...popular, ...others]
-            // Spread sorted and append the rest (excluding duplicates) so the state is LeagueType[]
-            setFormattedLeagues(sorted);
-            setFilteredLeagues(sorted);
-        }
+        setFormattedLeagues(leagues);
+        setFilteredLeagues(leagues);
     }, [leagues]);
 
 
@@ -74,20 +53,7 @@ function LeaguesScreen() {
         }, 200)
     }
 
-    // const handleLeagues = (league: LeagueType) => {
-
-
-    //     setSelectedLeagues((prev: LeagueType[]) => {
-    //         const exists = prev.some((item) => item.id === league.id)
-    //         if (exists) {
-    //             return prev.filter((item) => item.id !== league.id)
-    //         } else {
-    //             return [...prev, league]
-    //         }
-    //     })
-    //     susbscribeChangeRef.current = true
-    //     console.log(getNextSubscribedLeagues(), '*****');
-    // }
+    //handles league selection and subscription toggling with limit enforcement
     const handleLeagues = (league: LeagueType) => {
         setSelectedLeagues(prev => {
             const existsInSelected = prev.some(l => l.id === league.id);
@@ -169,26 +135,27 @@ function LeaguesScreen() {
             </View>
 
 
-            {/* {loading && (
+            {isPending && (
                 <View style={styles.center}>
                     <ActivityIndicator animating size="large" color="#10b981" />
                     <Text>Fetching Leagues...</Text>
                 </View>
             )}
 
-            {error && (
+            {isError && (
                 <View style={styles.center}>
-                    <Text style={{ color: "red" }}>Error loading leagues: {error}</Text>
+                    <Text style={{ color: "red" }}>Error loading leagues: {error.message}</Text>
+                    <Pressable onPress={() => refetch()} style={styles.retryButton}>
+                        <Text style={styles.retryText}>{isRefetching ? "Retrying..." : "Retry"}</Text>
+                    </Pressable>
                 </View>
-            )} */}
+            )}
 
-            {/* {!loading && !error && (
-            )} */}
-            <View style={styles.list}>
+            {!isPending && !isError && <View style={styles.list}>
                 {filteredLeagues.length > 0 ? (
                     <View style={{ position: 'relative' }}>
                         <FlatList
-                            data={showSubscribedOnly ? (subscribedLeagues.slice(0, visibleCount)) : (filteredLeagues.slice(0, visibleCount))}
+                            data={showSubscribedOnly ? subscribedLeagues : filteredLeagues}
                             keyExtractor={(item) => item.id}
                             showsVerticalScrollIndicator={true}
                             scrollEnabled={true}
@@ -220,8 +187,6 @@ function LeaguesScreen() {
                                 </Pressable>
                             }
                             }
-                            onEndReached={handleLoadMore}
-                            onEndReachedThreshold={0.5}
                             contentContainerStyle={{ paddingBottom: 250 }}
                         />
 
@@ -231,7 +196,7 @@ function LeaguesScreen() {
                     <Text style={styles.noResults}>No leagues found.</Text>
                 )}
 
-            </View>
+            </View>}
             {(susbscribeChangeRef.current && selectedLeagues.length > 0) && (
                 <Pressable
                     onPress={saveChanges}
@@ -303,6 +268,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         paddingVertical: 40,
+    },
+    retryButton: {
+        marginTop: 12,
+        backgroundColor: "#10b981",
+        borderRadius: 10,
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+    },
+    retryText: {
+        color: "#fff",
+        fontWeight: "600",
     },
     fab: {
         position: 'absolute',

@@ -1,12 +1,29 @@
 import { Stack } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { MD3LightTheme, PaperProvider, Text } from 'react-native-paper';
 import 'react-native-reanimated';
 
 import { useAuth, UserProvider } from '@/context/appContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import RouteGaurd from '@/lib/routeGuard';
+import { leagueCacheTime, leagueQueryKey } from '@/services/useLeagues';
 import { Image, LogBox, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+const queryClient = new QueryClient();
+
+// Apply the longer garbage-collection time only to league data.
+queryClient.setQueryDefaults(leagueQueryKey, {
+  gcTime: leagueCacheTime,
+});
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  key: 'MATCH_MATE_QUERY_CACHE',
+});
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -34,9 +51,23 @@ export default function RootLayout() {
   }
 
   return (
-    <UserProvider>
-      <AppContent />
-    </UserProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: asyncStoragePersister,
+        maxAge: leagueCacheTime,
+        buster: 'v1',
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) =>
+            query.queryKey[0] === leagueQueryKey[0] &&
+            query.state.status === 'success',
+        },
+      }}
+    >
+      <UserProvider>
+        <AppContent />
+      </UserProvider>
+    </PersistQueryClientProvider>
   );
 }
 
