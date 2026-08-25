@@ -1,4 +1,5 @@
 import ErrorScreen from '@/components/errorScreen';
+import EmptyState from '@/components/emptyState';
 import { LoadingState } from '@/components/hello-wave';
 import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
@@ -6,7 +7,7 @@ import { useAppStore } from '@/context/useAppStore';
 import { FILTERS } from '@/lib/utils';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -151,14 +152,6 @@ export default function HomeScreen() {
     }
   };
 
-  if (subscribedLeagues.length < 0) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Please subscribe to leagues to see matches.</Text>
-      </View>
-    )
-  }
-
   if (loading || refreshing) {
     return (
       <LoadingState message='fetching matches for today...' />
@@ -187,7 +180,7 @@ export default function HomeScreen() {
 
   return (
     <>
-      {subscribedLeagues.length > 0 ? <View>
+      {subscribedLeagues.length > 0 ? <View style={styles.screen}>
         <View style={styles.buttonWrapper}>
           {FILTERS.map((tab, index) => (
             <Pressable
@@ -231,7 +224,13 @@ export default function HomeScreen() {
                   )
                 })
               ) : (
-                <Text>No {activeTab.toLowerCase()} matches</Text>
+                <EmptyState
+                  icon={activeTab === 'Live' ? 'access-point' : activeTab === 'Upcoming' ? 'calendar-clock' : 'whistle-outline'}
+                  title={activeTab === 'Live' ? 'Nothing live right now' : activeTab === 'Upcoming' ? 'No upcoming matches today' : 'No finished matches yet'}
+                  description={activeTab === 'Live' ? 'We’ll show live scores here as soon as one of your leagues kicks off.' : activeTab === 'Upcoming' ? 'There are no scheduled fixtures for your leagues today. Check another date in Matches.' : 'Results from your subscribed leagues will appear here after full-time.'}
+                  actionLabel="Browse match calendar"
+                  onAction={() => router.push('/matches')}
+                />
               )
 
             }
@@ -239,9 +238,14 @@ export default function HomeScreen() {
         </ScrollView>
 
       </View> : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Please <Link style={{ color: '#10b981' }} href="/leagues">subscribe</Link> to leagues to see matches update.</Text>
-        </View>
+        <EmptyState
+          icon="trophy-outline"
+          title="Build your match feed"
+          description="Choose up to three leagues and we’ll bring their live scores, fixtures and results into one place."
+          actionLabel="Choose leagues"
+          onAction={() => router.push('/leagues')}
+          style={styles.fullEmptyState}
+        />
       )}
     </>
   );
@@ -249,6 +253,12 @@ export default function HomeScreen() {
 
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+  fullEmptyState: {
+    flex: 1,
+  },
   scrollContent: {
     padding: 16,
   },

@@ -1,6 +1,6 @@
 import { MatchCardType, TeamType } from "@/types";
 
-export const appName = "Match Beacon";
+export const appName = "FC Pulse";
 export const maxLeagues = 3;
 
 export const match: MatchCardType[] = [

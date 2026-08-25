@@ -4,297 +4,289 @@ import { matchTransformer } from "@/lib/utils";
 import { LeagueType, MatchCardType, PreferenceType, TeamType } from "@/types";
 import api from "./api";
 
+export const getFixturesByLeagues = async (
+  date: string,
+  leagueIds: LeagueType[],
+) => {
+  try {
+    const promises = leagueIds?.map((league) =>
+      api.get(`/competitions/${league.id}/matches`, {
+        params: {
+          dateFrom: date,
+          dateTo: date,
+        },
+      }),
+    );
+    const responses = await Promise.all(promises);
+    const rawMatches = responses.flatMap((res) => res.data.matches ?? []);
 
-export const getFixturesByLeagues = async (date: string, leagueIds: LeagueType[]) => {
-    try {
-        const promises = leagueIds?.map((league) => (
-            api.get(`/competitions/${league.id}/matches`, {
-                params: {
-                    dateFrom: date,
-                    dateTo: date,
-                }
-            })
-        ))
-        const responses = await Promise.all(promises);
-        const rawMatches = responses.flatMap(res => res.data.matches ?? []);
+    const allMatches = rawMatches.map(matchTransformer);
 
+    return allMatches;
+  } catch (error: any) {
+    console.error("Error fetching fixtures: ", error);
+    throw error;
+  }
+};
 
-        const allMatches = rawMatches.map(matchTransformer);
+export const susbscribeToLeages = async (leagues: LeagueType[]) => {
+  console.log(leagues, "LEagues we'll be sending to supabase");
+  try {
+    const { data, error } = await supabase
+      .from("subscribed_leagues")
+      .upsert(
+        {
+          leagues: leagues, // the list of leagues (array of league objects)
+          updated_at: new Date().toISOString(), // 🔧 Convert to ISO string
+        },
+        {
+          onConflict: "user_id", // Update if user_id already exists
+        },
+      )
+      .select() // 🔧 Add this to return the inserted/updated data
+      .single(); // 🔧 Return single row instead of array
 
-        return allMatches;
-    } catch (error: any) {
-        console.error('Error fetching fixtures: ', error)
-        throw error
+    if (error) {
+      throw error;
     }
-}
-
-export const susbscribeToLeages = async (leagues: LeagueType[],) => {
-    console.log(leagues, "LEagues we'll be sending to supabase");
-    try {
-        const { data, error } = await supabase
-            .from('subscribed_leagues')
-            .upsert({
-                leagues: leagues,  // the list of leagues (array of league objects)
-                updated_at: new Date().toISOString(), // 🔧 Convert to ISO string
-            }, {
-                onConflict: 'user_id' // Update if user_id already exists
-            })
-            .select() // 🔧 Add this to return the inserted/updated data
-            .single(); // 🔧 Return single row instead of array
-
-        if (error) {
-            throw error
-        }
-        return data
-    } catch (error) {
-        return error
-    }
-}
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
 export const getSubscribedLeagues = async () => {
-    try {
-        const { data, error } = await supabase
-            .from('subscribed_leagues')
-            .select('leagues')
-            .single(); // 🔧 Add .single() here too
+  try {
+    const { data, error } = await supabase
+      .from("subscribed_leagues")
+      .select("leagues")
+      .single(); // 🔧 Add .single() here too
 
-        if (error) {
-            if (error.code === 'PGRST116') {
-                console.log('No subscriptions found for user');
-                // 🔧 Use direct setState to bypass the action
-                useAppStore.setState({ subscribedLeagues: [] });
-                return [];
-            }
-            throw error;
-        }
-        console.log(data, 'Get request for subscribed leagues')
-        // 🔧 Use direct setState to bypass the action
-        useAppStore.setState({ subscribedLeagues: data?.leagues || [] });
-        return data?.leagues || [];
-    } catch (error) {
-        console.error('Error fetching subscribed leagues:', error);
-        throw error;
+    if (error) {
+      if (error.code === "PGRST116") {
+        console.log("No subscriptions found for user");
+        // Use direct setState to bypass the action
+        useAppStore.setState({ subscribedLeagues: [] });
+        return [];
+      }
+      throw error;
     }
-}
+    console.log(data, "Get request for subscribed leagues");
+    // 🔧 Use direct setState to bypass the action
+    useAppStore.setState({ subscribedLeagues: data?.leagues || [] });
+    return data?.leagues || [];
+  } catch (error) {
+    console.error("Error fetching subscribed leagues:", error);
+    throw error;
+  }
+};
 
+export const syncTeamsList = async (
+  teams: TeamType[],
+  type: "favourite" | "hate",
+) => {
+  console.log(teams, "LEagues we'll be sending to supabase");
+  try {
+    const { data, error } = await supabase
+      .from(type === "favourite" ? "favorite_teams" : "hate_teams")
+      .upsert(
+        {
+          teams,
+          updated_at: new Date().toISOString(), // 🔧 Convert to ISO string
+        },
+        {
+          onConflict: "user_id", // Update if user_id already exists
+        },
+      )
+      .select() // 🔧 Add this to return the inserted/updated data
+      .single(); // 🔧 Return single row instead of array
 
-
-
-
-
-
-
-
-
-
-
-
-export const syncTeamsList = async (teams: TeamType[], type: 'favourite' | 'hate') => {
-    console.log(teams, "LEagues we'll be sending to supabase");
-    try {
-        const { data, error } = await supabase
-            .from(type === 'favourite' ? 'favorite_teams' : 'hate_teams')
-            .upsert({
-                teams,
-                updated_at: new Date().toISOString(), // 🔧 Convert to ISO string
-            }, {
-                onConflict: 'user_id' // Update if user_id already exists
-            })
-            .select() // 🔧 Add this to return the inserted/updated data
-            .single(); // 🔧 Return single row instead of array
-
-        if (error) {
-            throw error
-        }
-        return data
-    } catch (error) {
-        return error
+    if (error) {
+      throw error;
     }
-}
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
 
-export const getTeamsList = async (type: 'favourite' | 'hate') => {
-    try {
-        const { data, error } = await supabase
-            .from(type === 'favourite' ? 'favorite_teams' : 'hate_teams')
-            .select('teams')
-            .single();
+export const getTeamsList = async (type: "favourite" | "hate") => {
+  try {
+    const { data, error } = await supabase
+      .from(type === "favourite" ? "favorite_teams" : "hate_teams")
+      .select("teams")
+      .single();
 
-        if (error) {
-            if (error.code === 'PGRST116') {
-                console.log(`No ${type} teams found for user`);
-                // Update Zustand with empty array
-                if (type === 'favourite') {
-                    useAppStore.setState({ favList: [] });
-                } else {
-                    useAppStore.setState({ hateTeamList: [] });
-                }
-                return [];
-            }
-            throw error;
-        }
-
-        const teams = data.teams || [];
-
-        // Update Zustand store
-        if (type === 'favourite') {
-            useAppStore.setState({ favList: teams });
+    if (error) {
+      if (error.code === "PGRST116") {
+        console.log(`No ${type} teams found for user`);
+        // Update Zustand with empty array
+        if (type === "favourite") {
+          useAppStore.setState({ favList: [] });
         } else {
-            useAppStore.setState({ hateTeamList: teams });
+          useAppStore.setState({ hateTeamList: [] });
         }
-
-        return teams;
-    } catch (error) {
-        console.error(`Error fetching ${type} teams:`, error);
-        throw error;
+        return [];
+      }
+      throw error;
     }
-}
 
+    const teams = data.teams || [];
 
-
-
-
-export const syncNotificationPreference = async (preference: PreferenceType) => {
-    console.log('Syncing preference...', preference);
-    try {
-        const { data, error } = await supabase
-            .from('user_preferences')
-            .upsert(
-                {
-                    enable_reminders: preference.enableReminders,
-                    reminder_time: preference.reminderTime
-                },
-                { onConflict: 'user_id' } // 👈 very important
-
-            )
-            .select()
-            .single();
-
-        if (error) throw error
-
-        console.log('Successfully synced preferences:', data);
-        return data;
-    } catch (error) {
-        console.error('Error syncing preferences:', error);
-        throw error;
+    // Update Zustand store
+    if (type === "favourite") {
+      useAppStore.setState({ favList: teams });
+    } else {
+      useAppStore.setState({ hateTeamList: teams });
     }
-}
+
+    return teams;
+  } catch (error) {
+    console.error(`Error fetching ${type} teams:`, error);
+    throw error;
+  }
+};
+
+export const syncNotificationPreference = async (
+  preference: PreferenceType,
+) => {
+  console.log("Syncing preference...", preference);
+  try {
+    const { data, error } = await supabase
+      .from("user_preferences")
+      .upsert(
+        {
+          enable_reminders: preference.enableReminders,
+          reminder_time: preference.reminderTime,
+        },
+        { onConflict: "user_id" }, // 👈 very important
+      )
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    console.log("Successfully synced preferences:", data);
+    return data;
+  } catch (error) {
+    console.error("Error syncing preferences:", error);
+    throw error;
+  }
+};
 
 export const getNotificationPreference = async () => {
-    try {
-        const { data, error } = await supabase
-            .from("user_preferences")
-            .select("enable_reminders, reminder_time")
-            .single(); // get only the row for the logged-in user (RLS applies)
+  try {
+    const { data, error } = await supabase
+      .from("user_preferences")
+      .select("enable_reminders, reminder_time")
+      .single(); // get only the row for the logged-in user (RLS applies)
 
-        if (error) {
-            // No preference created yet for this user
-            if (error.code === "PGRST116") {
-                console.log("No notification preference found — using defaults");
+    if (error) {
+      // No preference created yet for this user
+      if (error.code === "PGRST116") {
+        console.log("No notification preference found — using defaults");
 
-                const defaultPref: PreferenceType = {
-                    enableReminders: true,
-                    reminderTime: 30,
-                };
-
-                // Set Zustand directly (DO NOT call updatePreference)
-                useAppStore.setState({ preference: defaultPref });
-
-                return defaultPref;
-            }
-
-            throw error;
-        }
-
-        const pref: PreferenceType = {
-            enableReminders: data.enable_reminders ?? true,
-            reminderTime: data.reminder_time ?? 30,
+        const defaultPref: PreferenceType = {
+          enableReminders: true,
+          reminderTime: 30,
         };
 
-        // Update Zustand without triggering backend sync
-        useAppStore.setState({ preference: pref });
+        // Set Zustand directly (DO NOT call updatePreference)
+        useAppStore.setState({ preference: defaultPref });
 
-        return pref;
-    } catch (error) {
-        console.error("Error fetching notification preferences:", error);
-        throw error;
+        return defaultPref;
+      }
+
+      throw error;
     }
-};
 
-
-export const setMatchAlert = async (match: MatchCardType, reminder_time: number) => {
-    const payload = {
-        match_id: match.id,
-        reminder_time,
-        home_team: match.home.clubName,
-        away_team: match.away.clubName,
-        home_team_icon: match.home.clubIcon,
-        away_team_icon: match.away.clubIcon,
-        match_start: match.utcDate,
-        match_time_text: `${match.startDay} ${match.startTime}`,
+    const pref: PreferenceType = {
+      enableReminders: data.enable_reminders ?? true,
+      reminderTime: data.reminder_time ?? 30,
     };
 
-    try {
-        const { data, error } = await supabase
-            .from('match_alerts')
-            .upsert(payload, { onConflict: 'user_id,match_id' })
-            .select()
-            .single();
+    // Update Zustand without triggering backend sync
+    useAppStore.setState({ preference: pref });
 
-        if (error) throw error;
-
-        // 🔥 Update Zustand so UI updates instantly
-        useAppStore.setState((state: any) => ({
-            alertedMatches: [...new Set([...state.alertedMatches, payload.match_id])]
-        }));
-
-        return data;
-    } catch (error) {
-        console.error("Error setting match alert:", error);
-    }
+    return pref;
+  } catch (error) {
+    console.error("Error fetching notification preferences:", error);
+    throw error;
+  }
 };
 
+export const setMatchAlert = async (
+  match: MatchCardType,
+  reminder_time: number,
+) => {
+  const payload = {
+    match_id: match.id,
+    reminder_time,
+    home_team: match.home.clubName,
+    away_team: match.away.clubName,
+    home_team_icon: match.home.clubIcon,
+    away_team_icon: match.away.clubIcon,
+    match_start: match.utcDate,
+    match_time_text: `${match.startDay} ${match.startTime}`,
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from("match_alerts")
+      .upsert(payload, { onConflict: "user_id,match_id" })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // 🔥 Update Zustand so UI updates instantly
+    useAppStore.setState((state: any) => ({
+      alertedMatches: [...new Set([...state.alertedMatches, payload.match_id])],
+    }));
+
+    return data;
+  } catch (error) {
+    console.error("Error setting match alert:", error);
+  }
+};
 
 export const getAlertedMatches = async () => {
-    try {
-        const { data, error } = await supabase
-            .from('match_alerts')
-            .select('match_id');
+  try {
+    const { data, error } = await supabase
+      .from("match_alerts")
+      .select("match_id");
 
-        if (error) throw error;
+    if (error) throw error;
 
-        const ids = data?.map(item => item.match_id) ?? [];
+    const ids = data?.map((item) => item.match_id) ?? [];
 
-        useAppStore.setState({ alertedMatches: ids });
-        return ids;
-    } catch (error) {
-        console.error("Error fetching alerted matches:", error);
-        return [];
-    }
+    useAppStore.setState({ alertedMatches: ids });
+    return ids;
+  } catch (error) {
+    console.error("Error fetching alerted matches:", error);
+    return [];
+  }
 };
-
-
 
 export const removeMatchAlerts = async (match_id: number) => {
-    try {
-        const { error } = await supabase
-            .from('match_alerts')
-            .delete()
-            .eq('match_id', match_id);
+  try {
+    const { error } = await supabase
+      .from("match_alerts")
+      .delete()
+      .eq("match_id", match_id);
 
-        if (error) throw error;
+    if (error) throw error;
 
-        // Update zustand
-        useAppStore.setState((state) => ({
-            alertedMatches: state.alertedMatches.filter(id => id !== match_id)
-        }));
+    // Update zustand
+    useAppStore.setState((state) => ({
+      alertedMatches: state.alertedMatches.filter((id) => id !== match_id),
+    }));
 
-        return true;
-    } catch (error) {
-        console.error("Error removing match alert:", error);
-        return false;
-    }
+    return true;
+  } catch (error) {
+    console.error("Error removing match alert:", error);
+    return false;
+  }
 };
-
-
 
 // export async function saveExpoPushToken(userId: string, token: string) {
 //     const { error } = await supabase
@@ -311,22 +303,22 @@ export const removeMatchAlerts = async (match_id: number) => {
 //     }
 // }
 export async function saveExpoPushToken(userId: string, token: string) {
-    const existing = await supabase
-        .from("user_devices")
-        .select("*")
-        .eq("expo_push_token", token)
-        .maybeSingle();
+  const existing = await supabase
+    .from("user_devices")
+    .select("*")
+    .eq("expo_push_token", token)
+    .maybeSingle();
 
-    if (existing?.data) {
-        console.log("Token already saved — skipping");
-        return;
-    }
+  if (existing?.data) {
+    console.log("Token already saved — skipping");
+    return;
+  }
 
-    // Insert new token
-    const { error } = await supabase.from("user_devices").insert({
-        user_id: userId,
-        expo_push_token: token,
-    });
+  // Insert new token
+  const { error } = await supabase.from("user_devices").insert({
+    user_id: userId,
+    expo_push_token: token,
+  });
 
-    if (error) console.error(error);
+  if (error) console.error(error);
 }
