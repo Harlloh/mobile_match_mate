@@ -1,4 +1,5 @@
 import OnboardingItems from '@/components/onboardingItem';
+import { appName } from '@/lib/utils';
 import { OnboardingItemsType } from '@/types';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { Stack, useRouter } from "expo-router";
@@ -42,8 +43,8 @@ export default function OnboardingScreen() {
         <>
             <Stack.Screen options={{ headerShown: false }} />
             <View style={styles.container}>
-                <View style={{ paddingTop: 30 }}>
-                    <Text style={styles.title}>Welcome to Match Beacon ⚽</Text>
+                <View style={{ paddingTop: 50, }}>
+                    <Text style={styles.title}>Welcome to {appName} ⚽</Text>
                     <Text style={styles.text}>
                         Your Football, your way
                     </Text>
@@ -66,7 +67,7 @@ export default function OnboardingScreen() {
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         pagingEnabled
-                        bounces={false}
+                        bounces={true}
                         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
                             useNativeDriver: false
                         })}
@@ -142,11 +143,12 @@ const styles = StyleSheet.create({
         paddingVertical: 40,               // top & bottom breathing room
         // paddingHorizontal: 24,
         paddingBottom: 50,
+        // paddingTop: 80,
         backgroundColor: 'white',
         gap: 160
     },
     title: { fontSize: 24, fontWeight: "bold", marginBottom: 12 },
-    text: { textAlign: "center", marginBottom: 24 },
+    text: { textAlign: "center", marginBottom: 24, fontStyle: 'italic' },
     pagination: {
         flexDirection: "row",
         alignSelf: "center",

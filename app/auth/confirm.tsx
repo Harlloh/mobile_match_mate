@@ -67,7 +67,7 @@ export default function ConfirmMail() {
             }}
         >
             <Text style={{ fontSize: 22, fontWeight: "700", marginBottom: 8 }}>
-                Check your inbox 📬
+                Check your inbox
             </Text>
             <Text
                 style={{

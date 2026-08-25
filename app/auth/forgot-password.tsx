@@ -60,7 +60,7 @@ export default function ForgotPasswordScreen() {
                         alignContent: 'center',
                     }}>
                         <Text style={{ fontSize: 24, fontWeight: "700", marginBottom: 8, textAlign: 'center' }}>
-                            Reset Password 🔒
+                            Reset Password
                         </Text>
                         <Text style={{
                             color: "#6b7280",
@@ -68,7 +68,7 @@ export default function ForgotPasswordScreen() {
                             marginBottom: 35,
                             textAlign: 'center'
                         }}>
-                            Enter your email and we'll send you a link to reset your password.
+                            Enter your account email and we'll send a password reset link.
                         </Text>
 
                         <TextInput

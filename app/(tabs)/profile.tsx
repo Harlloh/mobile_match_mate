@@ -1,5 +1,6 @@
 import { useAuth } from '@/context/appContext';
 import { useAppStore } from '@/context/useAppStore';
+import { appName } from '@/lib/utils';
 import Slider from '@react-native-community/slider';
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -100,7 +101,7 @@ function ProfileScreen() {
 
             {/* ⚽ Footer */}
             <Text style={styles.footerText}>
-                FC Pulse v1.0.0 — Your Football, Your Way ⚽
+                {appName} v1.0.0 — Your Football, Your Way ⚽
             </Text>
         </ScrollView>
     );

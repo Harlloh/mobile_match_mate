@@ -1,171 +1,186 @@
 import { MatchCardType, TeamType } from "@/types";
-import leagueList from '../data/leagueList.json';
 
+export const appName = "Match Beacon";
+export const maxLeagues = 3;
 
 export const match: MatchCardType[] = [
-    {
-        league: 'Premier League',
-        leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-        startDay: 'Today',
-        startTime: '9:11pm',
-        isLive: false,
-        timeCurrentlyAt: 'FT',
-        home: {
-            clubIcon: "https://media.api-sports.io/football/teams/33.png",
-            clubName: 'Chelsea',
-            scored: 2
-        },
-        away: {
-            clubIcon: "https://media.api-sports.io/football/teams/34.png",
-            clubName: 'PSG',
-            scored: 1
-        },
-        stadium: 'Old Stanford Bridge',
-        isAlarmSet: false,
-
+  {
+    league: "Premier League",
+    leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
+    startDay: "Today",
+    startTime: "9:11pm",
+    isLive: false,
+    timeCurrentlyAt: "FT",
+    home: {
+      clubIcon: "https://media.api-sports.io/football/teams/33.png",
+      clubName: "Chelsea",
+      scored: 2,
     },
-    {
-        league: 'Premier League',
-        leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-        startDay: 'Tomorrow',
-        startTime: '9:11pm',
-        isLive: false,
-        timeCurrentlyAt: null,
-        home: {
-            clubIcon: "https://media.api-sports.io/football/teams/33.png",
-            clubName: 'Man U',
-            scored: null
-        },
-        away: {
-            clubIcon: "https://media.api-sports.io/football/teams/34.png",
-            clubName: 'New Castle',
-            scored: null
-        },
-        stadium: 'Emirates Stadium',
-        isAlarmSet: false,
-
+    away: {
+      clubIcon: "https://media.api-sports.io/football/teams/34.png",
+      clubName: "PSG",
+      scored: 1,
     },
-    {
-        league: 'Premier League',
-        leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-        startDay: 'Tomorrow',
-        startTime: '9:11pm',
-        isLive: false,
-        timeCurrentlyAt: null,
-        home: {
-            clubIcon: "https://media.api-sports.io/football/teams/33.png",
-            clubName: 'Man U',
-            scored: null
-        },
-        away: {
-            clubIcon: "https://media.api-sports.io/football/teams/34.png",
-            clubName: 'New Castle',
-            scored: null
-        },
-        stadium: 'Emirates Stadium',
-        isAlarmSet: false,
-
+    stadium: "Old Stanford Bridge",
+    isAlarmSet: false,
+  },
+  {
+    league: "Premier League",
+    leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
+    startDay: "Tomorrow",
+    startTime: "9:11pm",
+    isLive: false,
+    timeCurrentlyAt: null,
+    home: {
+      clubIcon: "https://media.api-sports.io/football/teams/33.png",
+      clubName: "Man U",
+      scored: null,
     },
-    {
-        league: 'Premier League',
-        leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-        startDay: 'Today',
-        startTime: '9:11pm',
-        isLive: true,
-        timeCurrentlyAt: '67',
-        home: {
-            clubIcon: "https://media.api-sports.io/football/teams/33.png",
-            clubName: 'Chelsea',
-            scored: 2
-        },
-        away: {
-            clubIcon: "https://media.api-sports.io/football/teams/34.png",
-            clubName: 'PSG',
-            scored: 1
-        },
-        stadium: 'Old Stanford Bridge',
-        isAlarmSet: false,
-
+    away: {
+      clubIcon: "https://media.api-sports.io/football/teams/34.png",
+      clubName: "New Castle",
+      scored: null,
     },
-    {
-        league: 'Premier League',
-        leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-        startDay: 'Today',
-        startTime: '9:11pm',
-        isLive: true,
-        timeCurrentlyAt: '67',
-        home: {
-            clubIcon: "https://media.api-sports.io/football/teams/33.png",
-            clubName: 'Chelsea',
-            scored: 2
-        },
-        away: {
-            clubIcon: "https://media.api-sports.io/football/teams/34.png",
-            clubName: 'PSG',
-            scored: 1
-        },
-        stadium: 'Old Stanford Bridge',
-        isAlarmSet: false,
-
+    stadium: "Emirates Stadium",
+    isAlarmSet: false,
+  },
+  {
+    league: "Premier League",
+    leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
+    startDay: "Tomorrow",
+    startTime: "9:11pm",
+    isLive: false,
+    timeCurrentlyAt: null,
+    home: {
+      clubIcon: "https://media.api-sports.io/football/teams/33.png",
+      clubName: "Man U",
+      scored: null,
     },
-
+    away: {
+      clubIcon: "https://media.api-sports.io/football/teams/34.png",
+      clubName: "New Castle",
+      scored: null,
+    },
+    stadium: "Emirates Stadium",
+    isAlarmSet: false,
+  },
+  {
+    league: "Premier League",
+    leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
+    startDay: "Today",
+    startTime: "9:11pm",
+    isLive: true,
+    timeCurrentlyAt: "67",
+    home: {
+      clubIcon: "https://media.api-sports.io/football/teams/33.png",
+      clubName: "Chelsea",
+      scored: 2,
+    },
+    away: {
+      clubIcon: "https://media.api-sports.io/football/teams/34.png",
+      clubName: "PSG",
+      scored: 1,
+    },
+    stadium: "Old Stanford Bridge",
+    isAlarmSet: false,
+  },
+  {
+    league: "Premier League",
+    leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
+    startDay: "Today",
+    startTime: "9:11pm",
+    isLive: true,
+    timeCurrentlyAt: "67",
+    home: {
+      clubIcon: "https://media.api-sports.io/football/teams/33.png",
+      clubName: "Chelsea",
+      scored: 2,
+    },
+    away: {
+      clubIcon: "https://media.api-sports.io/football/teams/34.png",
+      clubName: "PSG",
+      scored: 1,
+    },
+    stadium: "Old Stanford Bridge",
+    isAlarmSet: false,
+  },
 ];
 
 export const teams: TeamType[] = [
-    { id: "1", name: "Arsenal", icon: "https://media.api-sports.io/football/teams/42.png" },
-    { id: "2", name: "Chelsea", icon: "https://media.api-sports.io/football/teams/49.png" },
-    { id: "3", name: "Liverpool", icon: "https://media.api-sports.io/football/teams/40.png" },
-    { id: "4", name: "Manchester City", icon: "https://media.api-sports.io/football/teams/50.png" },
-    { id: "5", name: "Manchester United", icon: "https://media.api-sports.io/football/teams/33.png" },
-    { id: "6", name: "FC Barcelona", icon: "https://media.api-sports.io/football/teams/529.png" },
-    { id: "7", name: "Real Madrid", icon: "https://media.api-sports.io/football/teams/541.png" },
-    { id: "8", name: "Bayern Munich", icon: "https://media.api-sports.io/football/teams/157.png" },
+  {
+    id: "1",
+    name: "Arsenal",
+    icon: "https://media.api-sports.io/football/teams/42.png",
+  },
+  {
+    id: "2",
+    name: "Chelsea",
+    icon: "https://media.api-sports.io/football/teams/49.png",
+  },
+  {
+    id: "3",
+    name: "Liverpool",
+    icon: "https://media.api-sports.io/football/teams/40.png",
+  },
+  {
+    id: "4",
+    name: "Manchester City",
+    icon: "https://media.api-sports.io/football/teams/50.png",
+  },
+  {
+    id: "5",
+    name: "Manchester United",
+    icon: "https://media.api-sports.io/football/teams/33.png",
+  },
+  {
+    id: "6",
+    name: "FC Barcelona",
+    icon: "https://media.api-sports.io/football/teams/529.png",
+  },
+  {
+    id: "7",
+    name: "Real Madrid",
+    icon: "https://media.api-sports.io/football/teams/541.png",
+  },
+  {
+    id: "8",
+    name: "Bayern Munich",
+    icon: "https://media.api-sports.io/football/teams/157.png",
+  },
 ];
 
-
-
-export const FILTERS: string[] = [
-    'Live',
-    'Upcoming',
-    'Finished',
-];
+export const FILTERS: string[] = ["Live", "Upcoming", "Finished"];
 
 export const popularLeaguesList = [
-    "PL",     // Premier League (England)
-    "CL",     // UEFA Champions League
-    "EL",     // UEFA Europa League
-    "PD",     // La Liga (Spain)
-    "SA",     // Serie A (Italy)
-    "BL1",    // Bundesliga (Germany)
-    "FL1",    // Ligue 1 (France)
-    "DED",    // Eredivisie (Netherlands)
-    "PPL",    // Primeira Liga (Portugal)
-    "BSA",    // Brasileirão Série A (Brazil)
-    "MLS",    // Major League Soccer (USA)
-    "WC",     // FIFA World Cup
-    "EC",     // European Championship (EURO)
-    "FAC", //FA cup
-    "UCL", //UEFA conference league,
-    "EL",
-    "UNL", //UEFA Nations league
-    "ESC"
+  "PL", // Premier League (England)
+  "CL", // UEFA Champions League
+  "EL", // UEFA Europa League
+  "PD", // La Liga (Spain)
+  "SA", // Serie A (Italy)
+  "BL1", // Bundesliga (Germany)
+  "FL1", // Ligue 1 (France)
+  "DED", // Eredivisie (Netherlands)
+  "PPL", // Primeira Liga (Portugal)
+  "BSA", // Brasileirão Série A (Brazil)
+  "MLS", // Major League Soccer (USA)
+  "WC", // FIFA World Cup
+  "EC", // European Championship (EURO)
+  "FAC", //FA cup
+  "UCL", //UEFA conference league,
+  "EL",
+  "UNL", //UEFA Nations league
+  "ESC",
 ];
 
-
-
-
-
-
-
 export const formatDate = (dateInput: string | Date) => {
-    const date = new Date(dateInput);
+  const date = new Date(dateInput);
 
-    // Convert to YYYY-MM-DD (format API expects)
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+  // Convert to YYYY-MM-DD (format API expects)
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+  return `${year}-${month}-${day}`;
 };
 
 //MATCH TRANSFORMER FOR API-FOOTBALL
@@ -231,86 +246,65 @@ export const formatDate = (dateInput: string | Date) => {
 //     };
 // };
 
-
 //MATCH TRANSFORMER FOR FOOTBALL-DATA.ORG
 export const matchTransformer = (match: any): MatchCardType => {
-    if (!match) return null as any;
+  if (!match) return null as any;
 
-    const date = new Date(match.utcDate);
-    const now = new Date();
+  const date = new Date(match.utcDate);
+  const now = new Date();
 
-    const isToday = date.toDateString() === now.toDateString();
-    const isLive = match.status === "IN_PLAY" || match.status === "PAUSED";
+  const isToday = date.toDateString() === now.toDateString();
+  const isLive = match.status === "IN_PLAY" || match.status === "PAUSED";
 
+  // Determine timeCurrentlyAt
+  let timeCurrentlyAt: string | null = null;
 
-    // Determine timeCurrentlyAt
-    let timeCurrentlyAt: string | null = null;
+  if (match.status === "FINISHED") {
+    timeCurrentlyAt = "FT";
+  } else if (match.status === "PAUSED") {
+    timeCurrentlyAt = "HT"; // halftime
+  } else if (match.status === "IN_PLAY") {
+    timeCurrentlyAt = match.minute?.toString() || null; // free tier will usually be null
+  }
 
-    if (match.status === "FINISHED") {
-        timeCurrentlyAt = "FT";
-    }
-    else if (match.status === "PAUSED") {
-        timeCurrentlyAt = "HT"; // halftime
-    }
-    else if (match.status === "IN_PLAY") {
-        timeCurrentlyAt = match.minute?.toString() || null; // free tier will usually be null
-    }
+  return {
+    id: match.id,
+    isAlarmSet: false,
 
+    league: match.competition?.name || "",
+    leagueIcon: match.competition?.emblem || "",
 
-
-
-
-
-    return {
-        id: match.id,
-        isAlarmSet: false,
-
-        league: match.competition?.name || "",
-        leagueIcon: match.competition?.emblem || "",
-
-        startDay: isToday ? "Today" : date.toLocaleDateString("en-US", {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
+    startDay: isToday
+      ? "Today"
+      : date.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
         }),
-        utcDate: match.utcDate,
+    utcDate: match.utcDate,
 
-        startTime: date.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-        }),
+    startTime: date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    }),
 
-        isLive,
+    isLive,
 
-        timeCurrentlyAt,
+    timeCurrentlyAt,
 
-        home: {
-            clubIcon: match.homeTeam?.crest,
-            clubName: match.homeTeam?.shortName || match.homeTeam?.name,
-            scored: match.score?.fullTime?.home ?? null,
-        },
+    home: {
+      clubIcon: match.homeTeam?.crest,
+      clubName: match.homeTeam?.shortName || match.homeTeam?.name,
+      scored: match.score?.fullTime?.home ?? null,
+    },
 
-        away: {
-            clubIcon: match.awayTeam?.crest,
-            clubName: match.awayTeam?.shortName || match.awayTeam?.name,
-            scored: match.score?.fullTime?.away ?? null,
-        },
+    away: {
+      clubIcon: match.awayTeam?.crest,
+      clubName: match.awayTeam?.shortName || match.awayTeam?.name,
+      scored: match.score?.fullTime?.away ?? null,
+    },
 
-        // Football-data.org DOES NOT provide stadium / venue in free tier
-        stadium: "Unknown Stadium",
-    };
+    // Football-data.org DOES NOT provide stadium / venue in free tier
+    stadium: "Unknown Stadium",
+  };
 };
-
-
-export const formatedtLeaguexy = () => {
-    const leagues = leagueList.competitions.map((league: any) => {
-        return {
-            id: league?.code,
-            name: league.name,
-            logo: league.emblem,
-            type: league.type,
-            country: league.area.name
-        }
-    })
-    return leagues
-}

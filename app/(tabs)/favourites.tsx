@@ -16,14 +16,6 @@ function FavouritesScreen() {
     const [type, setType] = useState<"favourite" | "hate">("favourite");
     const [searchText, setSearchText] = useState<string>('')
 
-
-    // const sourceList = useMemo(() => {
-    //     // const sortedTeams = subscribedLeagues.flatMap((leagueItem) =>
-    //     //     teams.filter((team) => team.leagueCode == leagueItem.id)
-    //     // );
-    //     if (activeList === "Favourites") return teams;
-    //     return teams;
-    // }, [activeList]);
     const searchTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
     const sourceList = useMemo(() => {
