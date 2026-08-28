@@ -7,19 +7,22 @@ import api from "./api";
 export const getFixturesByLeagues = async (
   date: string,
   leagueIds: LeagueType[],
-) => {
-  try {
-    const promises = leagueIds?.map((league) =>
-      api.get(`/competitions/${league.id}/matches`, {
-        params: {
-          dateFrom: date,
-          dateTo: date,
-        },
-      }),
-    );
-    const responses = await Promise.all(promises);
-    const rawMatches = responses.flatMap((res) => res.data.matches ?? []);
+): Promise<MatchCardType[]> => {
+  if (leagueIds.length === 0) {
+    return [];
+  }
 
+  const competitionCodes = leagueIds.map((league) => league.id).join(",");
+
+  try {
+    const response = await api.get("/matches", {
+      params: {
+        date,
+        competitions: competitionCodes,
+      },
+    });
+
+    const rawMatches = response.data.matches ?? [];
     const allMatches = rawMatches.map(matchTransformer);
 
     return allMatches;
