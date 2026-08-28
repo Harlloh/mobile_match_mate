@@ -1,5 +1,5 @@
-import ErrorScreen from '@/components/errorScreen';
 import EmptyState from '@/components/emptyState';
+import ErrorScreen from '@/components/errorScreen';
 import { LoadingState } from '@/components/hello-wave';
 import MatchCard from '@/components/matchCard';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
@@ -154,7 +154,7 @@ function MatchesScreen() {
                     })}
                 </View>
 
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                <View style={styles.datePickerRow}>
                     <Pressable style={styles.calendarWrapper} onPress={handleCalendarPress}>
                         <FontAwesome5 name="calendar-alt" size={24} color="black" />
                         <Text>{formatDate(date)}</Text>
@@ -199,7 +199,8 @@ function MatchesScreen() {
                                 <MatchCard match={item} />
                             </View>
                         )
-                    }) :
+                    }
+                ) : (
                     <EmptyState
                         icon={activeFilter === 'live' ? 'access-point' : 'calendar-search'}
                         title={activeFilter === 'all' ? 'No fixtures on this date' : `No ${activeFilter} matches`}
@@ -208,6 +209,7 @@ function MatchesScreen() {
                         onAction={activeFilter === 'all' ? handleCalendarPress : () => setActiveFilter('all')}
                         style={styles.emptyState}
                     />
+                )
                 }
 
             </View>
@@ -228,9 +230,14 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingHorizontal: 20
     },
+    datePickerRow: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     emptyState: {
-        flex: 1,
-        minHeight: 360,
+        paddingTop: 48,
+        paddingBottom: 64,
     },
     buttonWrapper: {
         display: 'flex',
