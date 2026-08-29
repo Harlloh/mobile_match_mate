@@ -118,8 +118,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             await Notifications.setNotificationChannelAsync('default', {
                 name: 'default',
                 importance: Notifications.AndroidImportance.MAX,
-                vibrationPattern: [0, 250, 250, 250],
-                lightColor: '#FF231F7C',
+                vibrationPattern: [0, 250, 50, 350],
+                lightColor: '#10b981',
             });
         }
         if (Device.isDevice) {
