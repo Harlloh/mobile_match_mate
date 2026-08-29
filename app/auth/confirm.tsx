@@ -11,6 +11,7 @@ export default function ConfirmMail() {
     const [isResending, setIsResending] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
+    const [messageStatus, setMessageStatus] = useState("");
     const { user, setUser } = useAuth()
 
 
@@ -48,9 +49,11 @@ export default function ConfirmMail() {
         setIsVerifying(false);
 
         if (error) {
-            setStatusMessage(`❌ ${error.message}`);
+            setStatusMessage(`${error.message}`);
+            setMessageStatus('error')
         } else {
             setStatusMessage("✅ Email verified successfully!");
+            setMessageStatus('success')
             router.replace("/leagues");
         }
 
@@ -131,7 +134,7 @@ export default function ConfirmMail() {
             </Button>
 
             {statusMessage ? (
-                <Text style={{ color: "#6b7280", marginTop: 16, textAlign: "center" }}>
+                <Text style={{ color: messageStatus === 'error' ? 'red' : messageStatus === 'success' ? 'green' : "#6b7280", marginTop: 16, textAlign: "center" }}>
                     {statusMessage}
                 </Text>
             ) : null}
