@@ -48,10 +48,8 @@ function FavouritesScreen() {
     const handleToggle = (item: TeamType, toggleType: "favourite" | "hate") => {
         if (toggleType === "favourite") {
             setFavList(item)
-            console.log("Favourites:", favList);
         } else {
             setHateTeamList(item)
-            console.log("Hate List:", hateTeamList);
         }
 
     };

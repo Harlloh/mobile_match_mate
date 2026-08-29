@@ -1,15 +1,21 @@
 import { useAuth } from '@/context/appContext';
 import { useAppStore } from '@/context/useAppStore';
 import { appName } from '@/lib/utils';
+import { deleteAccount } from '@/services/accountService';
+import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
+import * as Notifications from 'expo-notifications';
 import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, Switch, Text } from "react-native-paper";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Button, Dialog, Portal, Switch, Text } from "react-native-paper";
 
 function ProfileScreen() {
     const { user, signOut, } = useAuth()
     const { updatePreference, preference } = useAppStore()
     const [isLoading, setIsLoading] = useState(false)
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
 
 
 
@@ -29,6 +35,37 @@ function ProfileScreen() {
 
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleDeleteAccount = async () => {
+        try {
+            setIsDeleting(true)
+            await deleteAccount()
+            await Notifications.cancelAllScheduledNotificationsAsync()
+
+            useAppStore.setState({
+                subscribedLeagues: [],
+                favList: [],
+                hateTeamList: [],
+                alertedMatches: [],
+                preference: {
+                    enableReminders: true,
+                    reminderTime: 30,
+                },
+            })
+
+            await AsyncStorage.removeItem('app-storage')
+            setShowDeleteDialog(false)
+            await signOut()
+        } catch (error) {
+            const message = error instanceof Error
+                ? error.message
+                : 'We could not delete your account. Please try again.'
+
+            Alert.alert('Account deletion failed', message)
+        } finally {
+            setIsDeleting(false)
         }
     }
 
@@ -59,7 +96,7 @@ function ProfileScreen() {
                 </Button>
             </View>
 
-            {/* 🔔 Match Reminders */}
+            {/* Match Reminders */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Match Reminders</Text>
 
@@ -96,13 +133,73 @@ function ProfileScreen() {
                 />
             </View>
 
-            {/* 📣 Notification Settings */}
+            {/* Danger Zone */}
+            <View style={[styles.section, styles.dangerSection]}>
+                <View style={styles.dangerHeading}>
+                    <View style={styles.dangerIcon}>
+                        <Feather name="alert-triangle" size={24} color="#dc2626"/>
+                    </View>
+                    <View style={styles.dangerHeadingText}>
+                        <Text style={styles.dangerTitle}>Danger zone</Text>
+                        <Text style={styles.dangerDescription}>
+                            Permanently delete your account and app data.
+                        </Text>
+                    </View>
+                </View>
+
+                <Button
+                    disabled={isDeleting}
+                    mode="outlined"
+                    icon="trash-can-outline"
+                    textColor="#dc2626"
+                    style={styles.deleteButton}
+                    contentStyle={styles.deleteButtonContent}
+                    onPress={() => setShowDeleteDialog(true)}
+                >
+                    Delete account
+                </Button>
+            </View>
 
 
             {/* ⚽ Footer */}
             <Text style={styles.footerText}>
                 {appName} v1.0.0 — Your Football, Your Way ⚽
             </Text>
+
+            <Portal>
+                <Dialog
+                    visible={showDeleteDialog}
+                    dismissable={!isDeleting}
+                    onDismiss={() => !isDeleting && setShowDeleteDialog(false)}
+                    style={styles.dialog}
+                >
+                    <Dialog.Icon icon="alert" color="#dc2626" size={40} />
+                    <Dialog.Title style={styles.dialogTitle}>Delete your account?</Dialog.Title>
+                    <Dialog.Content>
+                        <Text style={styles.dialogText}>
+                            This action is permanent. Your account, subscribed leagues, favourite and hate teams, match alerts, and notification preferences will be deleted.
+                        </Text>
+                        <Text style={styles.dialogWarning}>
+                            You will no longer receive match notifications, and this data cannot be recovered.
+                        </Text>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button disabled={isDeleting} textColor="#475569" onPress={() => setShowDeleteDialog(false)}>
+                            Keep account
+                        </Button>
+                        <Button
+                            mode="contained"
+                            buttonColor="#dc2626"
+                            textColor="#ffffff"
+                            loading={isDeleting}
+                            disabled={isDeleting}
+                            onPress={handleDeleteAccount}
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete account'}
+                        </Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </ScrollView>
     );
 }
@@ -182,6 +279,73 @@ const styles = StyleSheet.create({
         backgroundColor: "#e5e7eb",
         marginVertical: 12,
     },
+    dangerSection: {
+        borderWidth: 1,
+        borderColor: "#fecaca",
+        backgroundColor: "#fffafa",
+    },
+    dangerHeading: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 18,
+    },
+    dangerIcon: {
+        width: 44,
+        height: 44,
+        borderRadius: 21,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#fee2e2",
+        display: "flex",
+    },
+    dangerHeadingText: {
+        flex: 1,
+    },
+    dangerTitle: {
+        color: "#991b1b",
+        fontSize: 16,
+        fontWeight: "700",
+        marginBottom: 3,
+    },
+    dangerDescription: {
+        color: "#7f1d1d",
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    deleteButton: {
+        borderColor: "#dc2626",
+        borderRadius: 10,
+    },
+    deleteButtonContent: {
+        minHeight: 46,
+    },
+    dialog: {
+        backgroundColor: "#ffffff",
+        borderRadius: 20,
+    },
+    dialogTitle: {
+        textAlign: "center",
+        color: "#0f172a",
+        fontWeight: "700",
+    },
+    dialogText: {
+        color: "#475569",
+        fontSize: 14,
+        lineHeight: 21,
+        textAlign: "center",
+    },
+    dialogWarning: {
+        color: "#991b1b",
+        backgroundColor: "#fef2f2",
+        borderRadius: 10,
+        padding: 12,
+        marginTop: 14,
+        fontSize: 13,
+        lineHeight: 19,
+        textAlign: "center",
+        overflow: "hidden",
+    },
 
     /* Footer */
     footerText: {
@@ -191,6 +355,4 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
 });
-
-
 

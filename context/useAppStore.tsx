@@ -56,7 +56,6 @@ export const useAppStore = create<AppState>()(
                             ? state.subscribedLeagues.filter((item) => item.id !== league.id)
                             : [...state.subscribedLeagues, league];
 
-                        console.log('Updated subscribed leagues:', updated);
                         susbscribeToLeages(updated).catch(console.error)
                         return { subscribedLeagues: updated };
                     });
@@ -70,7 +69,6 @@ export const useAppStore = create<AppState>()(
                     const exists = state.hateTeamList.some(item => item.id === team.id)
 
                     const updated = exists ? state.hateTeamList.filter(item => item.id !== team.id) : [...state.hateTeamList, team];
-                    console.log('Added to the hate list', updated)
                     syncTeamsList(updated, 'hate')
                     return { hateTeamList: updated }
                 })
@@ -84,7 +82,6 @@ export const useAppStore = create<AppState>()(
 
                     const updated = exists ? state.favList.filter(item => item.id !== team.id) : [...state.favList, team];
 
-                    console.log('Added to the fav list', updated)
                     syncTeamsList(updated, 'favourite')
                     return { favList: updated }
                 })
