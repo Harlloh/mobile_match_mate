@@ -240,7 +240,8 @@ The partial index `match_alerts_pending_send_at_idx` contains `send_at` only for
 
 ### 7.6 Sending push notifications
 
-The `send-push-notification` Edge Function:
+The deployed `send-alert-notifications` Edge Function (invoked by the
+`send-push-notification` cron job):
 
 1. Recovers old `processing` alerts after an interrupted execution.
 2. Claims up to 100 due alerts through the RPC.
@@ -307,7 +308,7 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 - Expo accepting a push ticket does not guarantee that the device displayed it. Push receipts should be processed for stronger delivery monitoring and invalid-token cleanup.
 - Automatic conflict-ignore protects manual settings but also means a later provider schedule change will not update an existing automatic alert. A conditional server-side upsert would be needed to update automatic alerts while still protecting manual ones.
 - Fetching user configuration into one Edge Function is efficient for the current scale. At much larger scale, users should be processed in database-backed pages or jobs rather than all in one execution.
-- Edge Functions and database routines created in the Supabase dashboard are not currently present in this repository. This creates deployment and recovery risk.
+- Database migrations and deployed Edge Function sources are now stored in this repository. Cron schedules remain environment-specific and are managed separately so production URLs and credentials are not committed.
 
 ## 10. Completed checklist
 
@@ -370,7 +371,7 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 
 ### Recommended reliability work
 
-- [ ] Store Edge Functions and SQL migrations in the repository rather than only in the Supabase dashboard.
+- [x] Store Edge Functions and SQL migrations in the repository rather than only in the Supabase dashboard.
 - [ ] Process Expo push receipts.
 - [ ] Remove or disable device tokens reported as `DeviceNotRegistered`.
 - [ ] Add structured logs with job ID, counts, duration, and error category.
@@ -390,7 +391,7 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 2. Run `daily-match-scan` manually.
 3. Inspect new alerts and confirm team IDs, `send_at`, and pending status.
 4. Make one alert due while leaving its `match_start` in the future.
-5. Run `send-push-notification` once.
+5. Run the `send-alert-notifications` Edge Function once.
 6. Confirm the phone received it.
 7. Confirm `status = 'sent'`, `sent = true`, `sent_at` is populated, `attempt_count = 1`, and `last_error` is null.
 8. Run the sender again and confirm zero alerts are claimed.
@@ -408,8 +409,8 @@ Never use production user alerts for destructive tests unless the exact target r
 - Restrict the claim RPC to `service_role`.
 - Treat Expo push tokens as sensitive identifiers and expose them only to their owner and trusted server code.
 
-## 14. Source-of-truth warning
+## 14. Source of truth
 
-This repository contains the frontend changes, including manual-alert team IDs. The deployed Edge Functions, cron definitions, triggers, RPCs, indexes, and constraints were created or edited in Supabase and could not all be inspected from the local repository during this review.
+This repository now contains the frontend, an initial migration representing the remote database structure, and downloaded sources for all deployed Edge Functions. The migration includes tables, policies, triggers, RPCs, indexes, and constraints.
 
-The next infrastructure improvement should be exporting those definitions into version-controlled Supabase migrations and function directories. That will make the documented system reproducible and prevent the deployed backend from drifting away from the codebase.
+Cron schedules remain managed in the Supabase environment and are documented here. Their generated statements were deliberately removed from the baseline migration because they contained production-specific URLs and an embedded credential. Future cron automation should read credentials from Supabase Vault rather than storing literal keys in migration SQL.
