@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/appContext";
 import { supabase } from "@/lib/supabase";
+import { syncNotificationPreference } from "@/services/matchService";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView } from "react-native";
@@ -52,6 +53,12 @@ export default function ConfirmMail() {
             setStatusMessage(`${error.message}`);
             setMessageStatus('error')
         } else {
+
+            //update the user_preference table with default values
+            syncNotificationPreference({
+                enableReminders: true,
+                reminderTime: 30
+            })
             setStatusMessage("✅ Email verified successfully!");
             setMessageStatus('success')
             router.replace("/leagues");

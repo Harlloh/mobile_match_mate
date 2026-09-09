@@ -21,6 +21,8 @@ Notifications.setNotificationHandler({
     }),
 });
 
+
+
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [routeGuardReady, setRouteGuardReady] = useState<boolean>(false);

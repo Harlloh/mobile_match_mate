@@ -15,10 +15,9 @@ export const getCurrentTeamsForLeagues = async (
     return [];
   }
 
-  const { data, error } = await supabase.rpc(
-    "get_current_teams_for_leagues",
-    { selected_league_codes: leagueCodes },
-  );
+  const { data, error } = await supabase.rpc("get_current_teams_for_leagues", {
+    selected_league_codes: leagueCodes,
+  });
 
   if (error) {
     throw new Error(error.message);
