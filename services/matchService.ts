@@ -224,6 +224,8 @@ export const setMatchAlert = async (
   const payload = {
     match_id: match.id,
     reminder_time,
+    home_team_id: match.home.clubId,
+    away_team_id: match.away.clubId,
     home_team: match.home.clubName,
     away_team: match.away.clubName,
     home_team_icon: match.home.clubIcon,

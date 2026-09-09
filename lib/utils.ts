@@ -293,12 +293,14 @@ export const matchTransformer = (match: any): MatchCardType => {
     timeCurrentlyAt,
 
     home: {
+      clubId: match.homeTeam?.id,
       clubIcon: match.homeTeam?.crest,
       clubName: match.homeTeam?.shortName || match.homeTeam?.name,
       scored: match.score?.fullTime?.home ?? null,
     },
 
     away: {
+      clubId: match.awayTeam?.id,
       clubIcon: match.awayTeam?.crest,
       clubName: match.awayTeam?.shortName || match.awayTeam?.name,
       scored: match.score?.fullTime?.away ?? null,

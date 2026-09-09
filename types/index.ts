@@ -25,6 +25,7 @@ export type OnboardingItemsType = {
 
 
 export type ClubsType = {
+    clubId?: number;
     clubIcon: string;
     clubName: string;
     scored: number | null;
