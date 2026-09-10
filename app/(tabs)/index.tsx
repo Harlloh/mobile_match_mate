@@ -1,5 +1,5 @@
-import ErrorScreen from '@/components/errorScreen';
 import EmptyState from '@/components/emptyState';
+import ErrorScreen from '@/components/errorScreen';
 import { LoadingState } from '@/components/hello-wave';
 import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
@@ -26,108 +26,6 @@ export default function HomeScreen() {
 
   const { match, loading, error, refetch } = useHomeMatchesFixtures(today)
 
-  // const match: MatchCardType[] = useMemo<MatchCardType[]>(() =>
-  //   [
-  //     //finished
-  //     {
-  //       league: 'Premier League',
-  //       leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-  //       startDay: 'Today',
-  //       startTime: '9:11pm',
-  //       isLive: false,
-  //       timeCurrentlyAt: 'FT',
-  //       home: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/33.png",
-  //         clubName: 'Chelsea',
-  //         scored: 2
-  //       },
-  //       away: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/34.png",
-  //         clubName: 'PSG',
-  //         scored: 1
-  //       },
-  //       stadium: 'Old Stanford Bridge'
-  //     },
-  //     //upcoming
-  //     {
-  //       league: 'Premier League',
-  //       leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-  //       startDay: 'Tomorrow',
-  //       startTime: '9:11pm',
-  //       isLive: false,
-  //       timeCurrentlyAt: null,
-  //       home: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/33.png",
-  //         clubName: 'Man U',
-  //         scored: null
-  //       },
-  //       away: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/34.png",
-  //         clubName: 'New Castle',
-  //         scored: null
-  //       },
-  //       stadium: 'Emirates Stadium'
-  //     },
-  //     {
-  //       league: 'Premier League',
-  //       leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-  //       startDay: 'Tomorrow',
-  //       startTime: '9:11pm',
-  //       isLive: true,
-  //       timeCurrentlyAt: '67',
-  //       home: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/33.png",
-  //         clubName: 'Man U',
-  //         scored: null
-  //       },
-  //       away: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/34.png",
-  //         clubName: 'New Castle',
-  //         scored: null
-  //       },
-  //       stadium: 'Emirates Stadium'
-  //     },
-  //     {
-  //       league: 'Premier League',
-  //       leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-  //       startDay: 'Today',
-  //       startTime: '9:11pm',
-  //       isLive: true,
-  //       timeCurrentlyAt: '67',
-  //       home: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/33.png",
-  //         clubName: 'Chelsea',
-  //         scored: 2
-  //       },
-  //       away: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/34.png",
-  //         clubName: 'PSG',
-  //         scored: 1
-  //       },
-  //       stadium: 'Old Stanford Bridge'
-  //     },
-  //     {
-  //       league: 'Premier League',
-  //       leagueIcon: "https://media.api-sports.io/football/leagues/39.png",
-  //       startDay: 'Today',
-  //       startTime: '9:11pm',
-  //       isLive: true,
-  //       timeCurrentlyAt: '67',
-  //       home: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/33.png",
-  //         clubName: 'Chelsea',
-  //         scored: 2
-  //       },
-  //       away: {
-  //         clubIcon: "https://media.api-sports.io/football/teams/34.png",
-  //         clubName: 'PSG',
-  //         scored: 1
-  //       },
-  //       stadium: 'Old Stanford Bridge'
-  //     },
-
-  //   ], []
-  // )
 
   const activeList = activeTab === 'Live' ? liveList : activeTab === 'Upcoming' ? upcomingList : finishedList
 
@@ -178,9 +76,11 @@ export default function HomeScreen() {
     )
   }
 
+
   return (
     <>
-      {subscribedLeagues.length > 0 ? <View style={styles.screen}>
+      {subscribedLeagues.length > 0 ? (
+        <View style={styles.screen}>
         <View style={styles.buttonWrapper}>
           {FILTERS.map((tab, index) => (
             <Pressable
@@ -237,7 +137,8 @@ export default function HomeScreen() {
           </View>
         </ScrollView>
 
-      </View> : (
+      </View>
+      ) : (
         <EmptyState
           icon="trophy-outline"
           title="Build your match feed"

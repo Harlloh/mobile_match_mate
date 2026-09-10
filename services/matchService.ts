@@ -2,7 +2,6 @@ import { useAppStore } from "@/context/useAppStore";
 import { supabase } from "@/lib/supabase";
 import { matchTransformer } from "@/lib/utils";
 import { LeagueType, MatchCardType, PreferenceType, TeamType } from "@/types";
-import api from "./api";
 
 export const getFixturesByLeagues = async (
   date: string,
@@ -12,21 +11,26 @@ export const getFixturesByLeagues = async (
     return [];
   }
 
-  const competitionCodes = leagueIds.map((league) => league.id).join(",");
+  const competitionCodes = leagueIds.map((league) => String(league.id));
 
   try {
-    const response = await api.get("/matches", {
-      params: {
+    const { data, error } = await supabase.functions.invoke("get-matches", {
+      body: {
         date,
         competitions: competitionCodes,
       },
     });
 
-    const rawMatches = response.data.matches ?? [];
-    const allMatches = rawMatches.map(matchTransformer);
+    if (error) {
+      throw error;
+    }
 
-    return allMatches;
-  } catch (error: any) {
+    if (!data?.success) {
+      throw new Error(data?.error ?? "Unable to fetch matches");
+    }
+
+    return (data.matches ?? []).map(matchTransformer);
+  } catch (error) {
     console.error("Error fetching fixtures: ", error);
     throw error;
   }
@@ -232,6 +236,12 @@ export const setMatchAlert = async (
     away_team_icon: match.away.clubIcon,
     match_start: match.utcDate,
     match_time_text: `${match.startDay} ${match.startTime}`,
+    origin: "manual",
+    status: "pending",
+    sent: false,
+    sent_at: null,
+    attempt_count: 0,
+    last_error: null,
   };
 
   try {

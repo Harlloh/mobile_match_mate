@@ -76,7 +76,6 @@ export default function ResetPassword() {
                 // Check for initial URL (when app opens from closed state)
                 const initialUrl = await Linking.getInitialURL();
                 if (initialUrl) {
-                    console.log('Initial URL:', initialUrl);
                     const parsed = parseParams(initialUrl);
                     if (parsed && parsed.access_token && !hasProcessedRef.current) {
                         setDeepLinkValues(parsed);
@@ -87,11 +86,8 @@ export default function ResetPassword() {
 
                 // Listen for deep links while the app is running
                 const subscription = Linking.addEventListener('url', async ({ url }) => {
-                    console.log('Deep link received:', url);
-
                     // Prevent duplicate processing
                     if (hasProcessedRef.current) {
-                        console.log('Already processed, skipping...');
                         return;
                     }
 
@@ -130,13 +126,11 @@ export default function ResetPassword() {
     };
     // Function to set the session with tokens
     const setSessionWithTokens = async (tokens: typeof deepLinkValues) => {
-        console.log('Tokens received', tokens);
         if (!tokens.access_token || !tokens.refresh_token) {
             setMessage("❌ Invalid reset link");
             return;
         }
 
-        console.log('Setting session with tokens...');
 
 
         const { error } = await supabase.auth.setSession({
@@ -150,18 +144,9 @@ export default function ResetPassword() {
             hasProcessedRef.current = false; // Allow retry
         } else {
             setDeepLinkValues(tokens);
-            console.log('✅ Session set successfully', isLoading, deepLinkValues);
             setMessage("✅ Ready to set new password");
         }
     };
-
-    useEffect(() => {
-        console.log("💡 deepLinkValues updated:", deepLinkValues);
-
-        if (deepLinkValues.access_token) {
-            console.log("🔓 Now the UI can safely update");
-        }
-    }, [deepLinkValues]);
 
 
     useFocusEffect(

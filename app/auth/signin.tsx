@@ -102,7 +102,7 @@ function SignIn() {
                         </Button>
 
                         <View style={styles.signUpContainer}>
-                            <Text style={styles.signUpPrompt}>Don't have an account? </Text>
+                            <Text style={styles.signUpPrompt}>Do not have an account? </Text>
                             <Text
                                 onPress={() => router.replace('/auth/signup')}
                                 style={styles.signUpText}

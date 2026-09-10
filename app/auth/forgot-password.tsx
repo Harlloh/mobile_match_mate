@@ -68,7 +68,7 @@ export default function ForgotPasswordScreen() {
                             marginBottom: 35,
                             textAlign: 'center'
                         }}>
-                            Enter your account email and we'll send a password reset link.
+                            Enter your account email and we will send a password reset link.
                         </Text>
 
                         <TextInput

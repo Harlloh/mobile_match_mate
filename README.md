@@ -56,8 +56,10 @@ FC Pulse is a cross-platform mobile application that keeps football fans up to d
    ```env
    EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
    EXPO_PUBLIC_SUPABASE_ANON=your_supabase_anon_key
-   EXPO_PUBLIC_FOOTBALL_DATA_KEY=your_football_data_api_key
    ```
+
+   The football-data.org API key is stored only in Supabase Edge Function
+   secrets as `FOOTBALL_DATA_API_KEY`; it must not be included in the app.
 
 3. Start the app
 

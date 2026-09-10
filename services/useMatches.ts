@@ -4,6 +4,7 @@ import { LeagueType, MatchCardType } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 const MATCH_CACHE_TIME = 5 * 60 * 1000;
+const LIVE_MATCH_REFRESH_INTERVAL = 60 * 1000;
 const EMPTY_MATCHES: MatchCardType[] = [];
 
 const getMatchErrorMessage = (error: unknown) => {
@@ -33,6 +34,11 @@ export const useHomeMatchesFixtures = (date: string) => {
         enabled: sortedLeagues.length > 0,
         staleTime: MATCH_CACHE_TIME,
         gcTime: MATCH_CACHE_TIME,
+        // Poll only while at least one returned match is live.
+        refetchInterval: (currentQuery) =>
+            currentQuery.state.data?.some((match) => match.isLive)
+                ? LIVE_MATCH_REFRESH_INTERVAL
+                : false,
         retry: (failureCount, error) =>
             !getMatchErrorMessage(error).includes("rate limit") && failureCount < 2,
     });
