@@ -1,6 +1,6 @@
 # FC Pulse System Specification
 
-Last reviewed: 9 September 2026
+Last reviewed: 10 September 2026
 
 ## 1. Purpose
 
@@ -44,7 +44,7 @@ Expo Push Service              React Native app
 User's device
 ```
 
-Public catalogue data is synchronized into Supabase. User-specific selections and notification records are stored separately. Privileged operations use Edge Functions and the service-role key, which must never be included in the mobile application.
+Public catalogue data is synchronized into Supabase. User-specific selections and notification records are stored separately. All football-data.org traffic, including interactive match requests, now passes through Supabase Edge Functions. Privileged operations use Edge Functions and the service-role key, which must never be included in the mobile application.
 
 ## 4. Football catalogue
 
@@ -137,11 +137,37 @@ Only league and team catalogue queries are persisted. Match queries are delibera
 - Query root begins with `['matches']`.
 - The selected date and sorted subscribed league codes are part of the key.
 - Every date/league combination therefore has a distinct cache.
-- Current `staleTime` and `gcTime` are five minutes.
+- Normal `staleTime` and `gcTime` are five minutes.
 - Pull-to-refresh calls `refetch()` regardless of stale time.
-- Matches are requested for multiple competitions in one provider request.
+- The frontend invokes the authenticated `get-matches` Supabase Edge Function; it no longer calls football-data.org directly.
+- League codes are sent to the Edge Function as one array.
+- The raw server response still passes through the existing `matchTransformer`, preserving the app's established match-card structure.
+- TanStack Query polls every 60 seconds only after a returned match is identified as live (`IN_PLAY` or `PAUSED`). Polling stops when no returned match is live.
+- The known transition delay from `SCHEDULED`/`TIMED` to the first observed live result is intentionally accepted to avoid unnecessary constant polling.
 
-The match request still goes directly from the application to the configured football API client. Moving general match traffic behind a cached backend remains a future scaling improvement.
+### 5.4 Shared server match cache
+
+The `get-matches` Edge Function stores provider responses in `public.match_cache`:
+
+- One row represents one match date.
+- Each row contains matches for all currently visible leagues.
+- Users requesting different league combinations share the same date cache.
+- Before returning data, the Edge Function filters the shared result down to the requesting user's league codes.
+- Only authenticated users may invoke the function.
+- Requested competition codes are restricted to visible codes from `public.leagues`.
+
+Cache durations are based on the returned data:
+
+| Match data | Server cache duration |
+| --- | --- |
+| Contains `IN_PLAY` or `PAUSED` match | 1 minute |
+| Today, with no observed live match | 5 minutes |
+| Future date | 1 hour |
+| Past date | 24 hours |
+
+On a valid cache hit, football-data.org is not contacted. On a miss or expiry, the Edge Function makes one combined request for all visible leagues, updates the shared cache, and returns the requested subset. This changes 1,000 identical user requests within a cache window from roughly 1,000 provider calls to one provider call plus Supabase invocations.
+
+The former frontend Axios football client was removed. `EXPO_PUBLIC_FOOTBALL_DATA_KEY` was removed from frontend configuration; the provider credential now remains only in Supabase Edge Function secrets as `FOOTBALL_DATA_API_KEY`.
 
 ## 6. User account deletion
 
@@ -173,6 +199,8 @@ frontend match action -> match_alerts
 The unique key `(user_id, match_id)` ensures that a user has at most one alert for a match.
 
 Automatic inserts use conflict-ignore behaviour. This prevents the daily scan from overwriting an alert that the user configured manually.
+
+Manual upserts explicitly set `origin = 'manual'`, restore `status = 'pending'` and `sent = false`, clear `sent_at` and `last_error`, and reset `attempt_count`. This allows a user to rearm a previously automatic, failed, or sent alert. The database trigger recalculates `send_at` from the selected reminder time.
 
 ### 7.2 Important `match_alerts` fields
 
@@ -281,6 +309,7 @@ Observed jobs include:
 | Cron-history cleanup | `0 12 * * *` GMT | Remove old `cron.job_run_details` rows |
 | League sync | `0 2 * * 0` GMT | Refresh league/season metadata weekly |
 | League-team sync | `0 3 * * *` GMT | Process league seasons needing team synchronization |
+| Match-cache cleanup | Recommended daily | Remove cached dates older than 30 days |
 
 Cron expressions are interpreted in GMT/UTC. During West Africa Time, `00:01 GMT` displays as `01:01` locally.
 
@@ -300,10 +329,15 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 - Batch Expo messages in groups of 100.
 - Use a partial due-alert index.
 - Delete old alerts instead of retaining an unlimited notification history.
+- Proxy all interactive match requests through an authenticated Edge Function so the provider key is not shipped in the app.
+- Share one match cache per date across all users and league selections.
+- Poll from the frontend only while an observed match is live.
 
 ### Known trade-offs
 
 - Five-minute polling is simple and affordable but is not exact to the second.
+- Live matches refresh at one-minute intervals. This is timely enough for the product while leaving room beneath the provider's 10-request-per-minute limit.
+- Several simultaneous requests immediately after cache expiry could each miss before one finishes updating the cache. A database-backed refresh lock can be introduced later if real traffic produces a cache stampede.
 - One `match_alerts` row represents delivery for all of a user's devices. If one device accepts a notification and another fails, the alert is considered sent to avoid duplicating it on the successful device. Per-device guaranteed delivery would require a separate delivery table.
 - Expo accepting a push ticket does not guarantee that the device displayed it. Push receipts should be processed for stronger delivery monitoring and invalid-token cleanup.
 - Automatic conflict-ignore protects manual settings but also means a later provider schedule change will not update an existing automatic alert. A conditional server-side upsert would be needed to update automatic alerts while still protecting manual ones.
@@ -323,6 +357,11 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 - [x] Give each match date/league combination its own cache key.
 - [x] Support pull-to-refresh.
 - [x] Add improved empty states.
+- [x] Move frontend match requests behind the authenticated `get-matches` Edge Function.
+- [x] Add a shared, date-based match cache covering all visible leagues.
+- [x] Return only each request's selected league matches from the shared cache.
+- [x] Remove the football-data.org key and direct API client from frontend code.
+- [x] Add one-minute TanStack Query polling only for observed live matches.
 
 ### Account deletion
 
@@ -366,8 +405,16 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
   ```
 
 - [x] Verify that the cron-history cleanup job still deletes only old rows from `cron.job_run_details`.
-- [ ] Make a manual alert upsert explicitly set `origin = 'manual'`, reset `status = 'pending'`, clear `sent_at`/`last_error`, and reset `attempt_count`. This covers rearming an existing automatic, failed, or previously sent alert even when its time values are unchanged.
-- [ ] Perform one final manual-alert create/update/remove test.
+- [x] Make a manual alert upsert explicitly set `origin = 'manual'`, reset `status = 'pending'`, clear `sent_at`/`last_error`, and reset `attempt_count`. This covers rearming an existing automatic, failed, or previously sent alert even when its time values are unchanged.
+- [x] Perform one final manual-alert create/update/remove test.
+- [ ] Confirm a daily `clean-match-cache` cron job removes cache rows older than 30 days:
+
+  ```sql
+  delete from public.match_cache
+  where match_date < current_date - interval '30 days';
+  ```
+
+- [ ] Standardize every football Edge Function on `FOOTBALL_DATA_API_KEY`. At the time of this review, `sync-leagues` and `sync-league-teams` still reference the older `FOOTBALL_DATA_KEY` name; both secrets must remain configured until those functions are updated and redeployed.
 
 ### Recommended reliability work
 
@@ -380,7 +427,8 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 
 ### Future scaling work
 
-- [ ] Move general frontend match requests behind a server cache before user traffic makes provider limits a problem.
+- [x] Move general frontend match requests behind a shared server cache before user traffic makes provider limits a problem.
+- [ ] Add a database refresh lock if concurrent cache misses begin producing duplicate provider requests.
 - [ ] Page the daily scan by users if one execution approaches Edge Function runtime or memory limits.
 - [ ] Add a per-device notification delivery table only if guaranteed multi-device delivery becomes a requirement.
 - [ ] Replace conflict-ignore with a conditional database upsert if automatic alerts must follow provider kickoff changes without overwriting manual settings.
@@ -399,10 +447,19 @@ A successful `net.http_post` cron execution only proves that Postgres submitted 
 
 Never use production user alerts for destructive tests unless the exact target rows have been identified first.
 
+### Match-cache test
+
+1. Sign in on a real device and open the Matches screen.
+2. Confirm the request reaches `get-matches` and matches render using the existing UI structure.
+3. Repeat the same date request inside its cache window and confirm the function reports `cached: true`.
+4. During an observed live match, confirm the frontend invokes the query approximately once per minute.
+5. Confirm different users or league selections for the same date reuse the same `match_cache` row.
+
 ## 13. Security rules
 
 - Never include `SUPABASE_SERVICE_ROLE_KEY` in frontend code.
-- Never include `FOOTBALL_DATA_API_KEY` in frontend code once provider access is fully server-side.
+- Never include `FOOTBALL_DATA_API_KEY` in frontend code; provider access is fully server-side.
+- Never recreate the provider key with an `EXPO_PUBLIC_` prefix; Expo inlines those values into the readable client bundle.
 - Store scheduled-job credentials in Supabase-managed secrets/Vault.
 - Require authentication for privileged Edge Functions.
 - Keep Row Level Security enabled for user-owned tables.
@@ -411,6 +468,6 @@ Never use production user alerts for destructive tests unless the exact target r
 
 ## 14. Source of truth
 
-This repository now contains the frontend, an initial migration representing the remote database structure, and downloaded sources for all deployed Edge Functions. The migration includes tables, policies, triggers, RPCs, indexes, and constraints.
+This repository now contains the frontend, an initial migration representing the remote database structure, and downloaded sources for the deployed Edge Functions, including `get-matches`. The migration includes tables, policies, triggers, RPCs, indexes, and constraints. The Expo TypeScript configuration excludes `supabase/functions` because those functions run on Deno and are checked/deployed separately from the React Native application.
 
 Cron schedules remain managed in the Supabase environment and are documented here. Their generated statements were deliberately removed from the baseline migration because they contained production-specific URLs and an embedded credential. Future cron automation should read credentials from Supabase Vault rather than storing literal keys in migration SQL.
