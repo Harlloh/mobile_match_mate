@@ -4,7 +4,7 @@ import { LoadingState } from '@/components/hello-wave';
 import LiveToast from '@/components/liveToast';
 import MatchCard from '@/components/matchCard';
 import { useAppStore } from '@/context/useAppStore';
-import { FILTERS } from '@/lib/utils';
+import { FILTERS, formatDate } from '@/lib/utils';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
 import { router } from 'expo-router';
@@ -22,7 +22,7 @@ export default function HomeScreen() {
   const [liveList, setLiveList] = useState<MatchCardType[] | []>([])
   const [refreshing, setRefreshing] = useState(false)
   // const [activeList, setActiveList] = useState<MatchCardType[] | []>([])
-  const today = new Date().toISOString().split('T')[0];
+  const today = formatDate(new Date());
 
   const { match, loading, error, refetch } = useHomeMatchesFixtures(today)
 

@@ -2,18 +2,20 @@ import EmptyState from '@/components/emptyState';
 import ErrorScreen from '@/components/errorScreen';
 import { LoadingState } from '@/components/hello-wave';
 import MatchCard from '@/components/matchCard';
+import { formatDate as formatDateForApi } from '@/lib/utils';
 import { useHomeMatchesFixtures } from '@/services/useMatches';
 import { MatchCardType } from '@/types';
 import { FontAwesome5 } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useMemo, useState } from "react";
 import { Modal, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 function MatchesScreen() {
     const [date, setDate] = useState(new Date());
+    const [draftDate, setDraftDate] = useState(date);
     const { match, loading, error, refetch } = useHomeMatchesFixtures(
-        date.toISOString().split("T")[0]
+        formatDateForApi(date)
     );
     const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'finished'>('all');
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -41,18 +43,30 @@ function MatchesScreen() {
 
 
 
-    const onDateChange = (event: any, selectedDate?: Date) => {
-        if (selectedDate) {
-            setDate(selectedDate);
-            console.log(selectedDate)
-        }
+    const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
             setShowDatePicker(false);
+
+            if (event.type === 'set' && selectedDate) {
+                setDate(selectedDate);
+            }
+
+            return;
+        }
+
+        if (selectedDate) {
+            setDraftDate(selectedDate);
         }
     };
 
     const handleCalendarPress = () => {
+        setDraftDate(date);
         setShowDatePicker(true);
+    };
+
+    const confirmIosDate = () => {
+        setDate(draftDate);
+        setShowDatePicker(false);
     };
 
     const filteredMatch = useMemo(() => {
@@ -163,21 +177,38 @@ function MatchesScreen() {
 
                 {showDatePicker && (
                     Platform.OS === 'ios' ? (
-                        <Modal transparent={true} animationType="slide">
+                        <Modal
+                            visible
+                            transparent
+                            animationType="slide"
+                            presentationStyle="overFullScreen"
+                            statusBarTranslucent
+                            onRequestClose={() => setShowDatePicker(false)}
+                        >
                             <View style={styles.modalOverlay}>
                                 <View style={styles.modalContent}>
                                     <DateTimePicker
-                                        value={date}
+                                        value={draftDate}
                                         mode="date"
                                         display="spinner"
                                         onChange={onDateChange}
+                                        themeVariant="light"
+                                        textColor="#111827"
                                     />
-                                    <Pressable
-                                        style={styles.doneButton}
-                                        onPress={() => setShowDatePicker(false)}
-                                    >
-                                        <Text style={{ color: '#10b981', fontWeight: '600' }}>Done</Text>
-                                    </Pressable>
+                                    <View style={styles.modalActions}>
+                                        <Pressable
+                                            style={styles.modalButton}
+                                            onPress={() => setShowDatePicker(false)}
+                                        >
+                                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                                        </Pressable>
+                                        <Pressable
+                                            style={styles.modalButton}
+                                            onPress={confirmIosDate}
+                                        >
+                                            <Text style={styles.doneButtonText}>Done</Text>
+                                        </Pressable>
+                                    </View>
                                 </View>
                             </View>
                         </Modal>
@@ -303,9 +334,24 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 15,
         paddingBottom: 50,
     },
-    doneButton: {
-        alignSelf: 'center',
-        marginTop: 10,
+    modalActions: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        gap: 12,
+        paddingHorizontal: 20,
+        paddingTop: 10,
+    },
+    modalButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+    },
+    cancelButtonText: {
+        color: '#6b7280',
+        fontWeight: '600',
+    },
+    doneButtonText: {
+        color: '#10b981',
+        fontWeight: '600',
     },
     errorContainer: {
         flexGrow: 1, // Changed from flex: 1

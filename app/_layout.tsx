@@ -7,6 +7,7 @@ import { MD3LightTheme, PaperProvider, Text } from 'react-native-paper';
 import 'react-native-reanimated';
 
 import { useAuth, UserProvider } from '@/context/appContext';
+import AppUpdateChecker from '@/components/AppUpdateChecker';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import RouteGaurd from '@/lib/routeGuard';
 import { leagueCacheTime, leagueQueryKey } from '@/services/useLeagues';
@@ -97,6 +98,7 @@ function AppContent() {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
+        <AppUpdateChecker />
         <RouteGaurd>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
