@@ -104,7 +104,7 @@ function MatchesScreen() {
     if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <LoadingState message='Please wait while loading matches...'></LoadingState>
+                <LoadingState message='Loading, please wait'></LoadingState>
             </View>
         )
     }
